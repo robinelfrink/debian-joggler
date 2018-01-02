@@ -3,6 +3,11 @@
 This is used to create a base [Debian Stretch](https://www.debian.org/) image for
 the [O2 Joggler](https://en.wikipedia.org/wiki/O2_Joggler).
 
+## Requirements
+
+A computer running Linux, having `debootstrap`, `mount`, `parted`, `coreutils`
+and `xz-utils` installed.
+
 ## Creating the image
 
 Clone this repository, and run:
