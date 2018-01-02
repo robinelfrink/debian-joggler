@@ -2,9 +2,7 @@
 !/build.sh
 !/files/fstab
 !/files/grub.cfg
-!/files/grub.efi
 !/files/interfaces
 !/files/openframe-mac
 !/files/sources.list
-!/files/unicode.pf2
 !/README.md
