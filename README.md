@@ -35,17 +35,11 @@ password `joggler`. This user is part of the `sudo` group.
 
 ## Notes
 
-* A patched version of grub has been used, because of
-  [kernel relocation issues](http://wuffcode.wolfpuppy.org.uk/2012/01/joggler-improving-grub.html).
-  This specific grub binary has been taken from
-  [Jools Wills' Ubuntu image](https://jwills.co.uk/projects/joggler-xubuntu/).
 * A script is in use to generate a MAC address for the ethernet device. This
   script has been taken from [Andrew Davison's repository](https://github.com/andydvsn/OpenFrame-Ubuntu/).
 
 ## To do
 
-* Try to get the kernel booted using an unpatched EFI bootloader available
-  in Debian.
 * Investigate if there's really no sign of a MAC address to use for the
   ethernet device in the firmware.
 * Find out why the GMA500 driver is oopsing the kernel, and see if it can be

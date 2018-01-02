@@ -53,7 +53,7 @@ sudo mkdir -p ${ROOT}/root/boot
 sudo mount -t vfat ${LOOP}p1 ${ROOT}/root/boot
 
 # Install base system
-sudo debootstrap --foreign --arch=i386 --components=main,contrib,non-free --include apt-transport-https,busybox,firmware-misc-nonfree,initramfs-tools,initramfs-tools-core,klibc-utils,libklibc,linux-base,openssh-server,r8168-dkms,sudo,vim --exclude nano stretch ${ROOT}/root
+sudo debootstrap --foreign --arch=i386 --components=main,contrib,non-free --include apt-transport-https,busybox,firmware-misc-nonfree,grub-efi-ia32,initramfs-tools,initramfs-tools-core,klibc-utils,libklibc,linux-base,openssh-server,r8168-dkms,sudo,vim --exclude nano stretch ${ROOT}/root
 sudo chroot ${ROOT}/root /debootstrap/debootstrap --second-stage
 
 # Copy /etc/apt/sources.list
@@ -71,9 +71,8 @@ sudo chroot ${ROOT}/root apt-get install --assume-yes linux-headers-4.9.0-4-686 
 # Make bootable
 printf "fs1:\ngrub\nfs1:\ngrub\n" | sudo tee ${ROOT}/root/boot/boot.nsh > /dev/null
 printf "fs1:\nboot\nfs0:\nboot\n" | sudo tee ${ROOT}/root/boot/startup.nsh > /dev/null
-sudo cp ${ROOT}/files/grub.efi ${ROOT}/root/boot/
 sudo cp ${ROOT}/files/grub.cfg ${ROOT}/root/boot/
-sudo cp ${ROOT}/files/unicode.pf2 ${ROOT}/root/boot/
+sudo chroot ${ROOT}/root grub-mkimage --config /boot/grub.cfg --compression xz --output /boot/grub.efi --format i386-efi --prefix "" configfile fat part_msdos linux boot search search_label efi_gop efi_uga
 
 # Boot in multi-user mode
 sudo chroot ${ROOT}/root systemctl set-default multi-user.target
