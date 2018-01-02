@@ -1,0 +1,5 @@
+LABEL=jogglerroot / ext4 errors=remount-ro,noatime 0 1
+LABEL=jogglerboot /boot vfat defaults 0 0
+proc /proc proc nodev,noexec,nosuid 0 0
+tmpfs /tmp tmpfs noatime,size=192M 0 0
+/tmp /var/tmp none bind 0 0
