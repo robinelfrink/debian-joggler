@@ -27,7 +27,7 @@ unmount () {
 
 # Create image
 unmount
-rm -f ${ROOT}/joggler.img
+rm -f ${ROOT}/joggler.img ${ROOT}/joggler.img.xz
 truncate -s2G ${ROOT}/joggler.img
 
 # Set up partitions
@@ -82,6 +82,7 @@ sudo cp ${ROOT}/files/fstab ${ROOT}/root/etc/fstab
 
 # Set hostname
 printf "joggler" | sudo tee ${ROOT}/root/etc/hostname > /dev/null
+sudo sed -i '1 a 127.0.1.1 joggler' ${ROOT}/root/etc/hosts
 
 # Add user
 sudo chroot ${ROOT}/root useradd --home-dir /home/joggler --groups sudo,audio,video --create-home --password sa0dkJX04f4tM --shell /bin/bash joggler
