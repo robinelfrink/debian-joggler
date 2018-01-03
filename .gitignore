@@ -5,4 +5,6 @@
 !/files/interfaces
 !/files/openframe-mac
 !/files/sources.list
+!/qemu/internal.img
+!/qemu/bios32.bin
 !/README.md
