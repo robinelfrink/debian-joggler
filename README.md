@@ -10,9 +10,11 @@ and `xz-utils` installed.
 
 ## Creating the image
 
-Clone this repository, and run:
-
-    $ ./build.sh
+    Usage: ./build.sh [OPTION]...
+    Create Debian Stretch image for the O2 Joggler.
+    
+    -s, --size SIZE    Total size of the image in MB, defaults to 2000
+    -h, --help         Display this help and exit
 
 The script uses sudo, so it will ask for your password.
 
