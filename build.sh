@@ -1,7 +1,52 @@
 #!/bin/sh
 
 
-ROOT=`dirname $(readlink -f $0)`
+SCRIPT=$0
+ROOT=`dirname $(readlink -f ${SCRIPT})`
+
+
+help() {
+    echo "Usage: ${SCRIPT} [OPTION]..."
+    echo "Create Debian Stretch image for the O2 Joggler."
+    if [ -n "$1" ]; then
+        echo
+        echo "Error: $1"
+    fi
+    echo
+    echo "-s, --size SIZE    Total size of the image in MB, defaults to 2000"
+    echo "-h, --help         Display this help and exit"
+    echo
+    if [ -z "$1" ]; then
+        exit 0
+    fi
+    exit 1
+}
+
+
+# Parse arguments
+SIZE=2000M
+until [ -z "$1" ]; do
+    OPT=$1
+    case ${OPT} in
+        "-s"|"--size")
+            shift
+            if [ -z "$1" ]; then
+                help "Option ${OPT} needs a value."
+            fi
+            if ! [ "$1" -eq "$1" ] 2> /dev/null; then
+                help "Option ${OPT} requires an integer value."
+            fi
+            SIZE=$1
+            shift
+            ;;
+        "-h"|"--help")
+            help
+            ;;
+        *)
+            help "Unknown option ${OPT}."
+            ;;
+    esac
+done
 
 
 # Require root privileges
@@ -28,7 +73,7 @@ unmount () {
 # Create image
 unmount
 rm -f ${ROOT}/joggler.img ${ROOT}/joggler.img.xz
-truncate -s2G ${ROOT}/joggler.img
+truncate -s${SIZE}M ${ROOT}/joggler.img
 
 # Set up partitions
 parted -s ${ROOT}/joggler.img mklabel msdos
