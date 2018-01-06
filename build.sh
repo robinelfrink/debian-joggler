@@ -98,7 +98,7 @@ sudo mkdir -p ${ROOT}/root/boot
 sudo mount -t vfat ${LOOP}p1 ${ROOT}/root/boot
 
 # Install base system
-sudo debootstrap --foreign --arch=i386 --components=main,contrib,non-free --include apt-transport-https,busybox,firmware-misc-nonfree,grub-efi-ia32,initramfs-tools,initramfs-tools-core,klibc-utils,libklibc,linux-base,openssh-server,r8168-dkms,sudo,vim --exclude nano stretch ${ROOT}/root
+sudo debootstrap --foreign --arch=i386 --components=main,contrib,non-free --include apt-transport-https,busybox,firmware-misc-nonfree,grub-efi-ia32,initramfs-tools,initramfs-tools-core,klibc-utils,libklibc,linux-base,openssh-server,r8168-dkms,sudo --exclude dmidecode,irqbalance stretch ${ROOT}/root
 sudo chroot ${ROOT}/root /debootstrap/debootstrap --second-stage
 
 # Copy /etc/apt/sources.list
