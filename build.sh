@@ -24,7 +24,7 @@ help() {
 
 
 # Parse arguments
-SIZE=2000M
+SIZE=2000
 until [ -z "$1" ]; do
     OPT=$1
     case ${OPT} in
