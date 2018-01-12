@@ -45,7 +45,7 @@ from [here](https://github.com/BlankOn/ovmf-blobs).
 
 Run:
 
-    qemu-system-x86_64 -bios qemu/bios32.bin -usb -device nec-usb-xhci,id=xhci \
+    qemu-system-i386 -bios qemu/bios32.bin -usb -device nec-usb-xhci,id=xhci \
         -drive if=none,format=raw,id=internal,file=qemu/internal.img \
         -device usb-storage,bus=xhci.0,drive=internal \
         -drive if=none,format=raw,id=external,file=joggler.img \
