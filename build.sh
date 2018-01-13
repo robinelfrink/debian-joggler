@@ -139,7 +139,7 @@ sudo cp ${ROOT}/files/openframe-mac ${ROOT}/root/etc/network/if-pre-up.d/
 sudo chmod 755 ${ROOT}/root/etc/network/if-pre-up.d/openframe-mac
 
 # Clean up
-sudo rm -f ${ROOT}/var/cache/apt/archives/*.deb
+sudo rm -f ${ROOT}/root/var/cache/apt/archives/*.deb
 unmount
 sudo losetup -d ${LOOP}
 sudo rm -rf ${ROOT}/root
