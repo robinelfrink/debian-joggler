@@ -13,8 +13,11 @@ and `xz-utils` installed.
     Usage: ./build.sh [OPTION]...
     Create Debian Stretch image for the O2 Joggler.
     
-    -s, --size SIZE    Total size of the image in MB, defaults to 2000
-    -h, --help         Display this help and exit
+    -s, --size SIZE       Total size of the image in MB, defaults to 2000
+    -k, --kernel VERSION  Use kernel VERSION. Make sure the linux-image-*
+                          and linux-headers-* packages are in ./kernel/.
+    -g, --enable-gma500   Enable the gma500_gfx framebuffer driver.
+    -h, --help            Display this help and exit
 
 The script uses sudo, so it will ask for your password.
 
@@ -63,14 +66,10 @@ emulated machine as close to the Joggler as possible, but this will do for now.
 
 * A script is in use to generate a MAC address for the ethernet device. This
   script has been taken from [Andrew Davison's repository](https://github.com/andydvsn/OpenFrame-Ubuntu/).
+* The `gma500_gfx` has been disabled on boot by default, because the Joggler
+  will result in a kernel panic when loaded and no proper patches have been
+  applied. See [here](kernel/) if you want to use a patched kernel.
 
 ## To do
 
-* Investigate if there's really no sign of a MAC address to use for the
-  ethernet device in the firmware.
-* Find out why the GMA500 driver is oopsing the kernel, and see if it can be
-  prevented by either some kernel parameters or a patch.
-* Build a kernel incorporating some or all of the patches found at
-  [Andrew's site](http://birdslikewires.co.uk/download/openframe/kernel/).
 * Build a kernel optimised for the Joggler. Remove ISA, floppy, HDMI etc.
-
