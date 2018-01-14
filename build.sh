@@ -13,8 +13,11 @@ help() {
         echo "Error: $1"
     fi
     echo
-    echo "-s, --size SIZE    Total size of the image in MB, defaults to 2000"
-    echo "-h, --help         Display this help and exit"
+    echo "-s, --size SIZE       Total size of the image in MB, defaults to 2000"
+    echo "-k, --kernel VERSION  Use kernel VERSION. Make sure the linux-image-*"
+    echo "                      and linux-headers-* packages are in ./kernel/."
+    echo "-g, --enable-gma500   Enable the gma500_gfx framebuffer driver."
+    echo "-h, --help            Display this help and exit"
     echo
     if [ -z "$1" ]; then
         exit 0
@@ -25,19 +28,43 @@ help() {
 
 # Parse arguments
 SIZE=2000
+GMA500=""
+KERNEL=""
+DEB_IMAGE=""
+DEB_HEADERS=""
 until [ -z "$1" ]; do
     OPT=$1
     case ${OPT} in
         "-s"|"--size")
             shift
-            if [ -z "$1" ]; then
+            SIZE=$1
+            if [ -z "${SIZE}" ]; then
                 help "Option ${OPT} needs a value."
             fi
-            if ! [ "$1" -eq "$1" ] 2> /dev/null; then
+            if ! [ "${SIZE}" -eq "${SIZE}" ] 2> /dev/null; then
                 help "Option ${OPT} requires an integer value."
             fi
-            SIZE=$1
             shift
+            ;;
+        "-k"|"--kernel")
+            shift
+            KERNEL=$1
+            if [ -z "${KERNEL}" ]; then
+                help "Option ${OPT} needs a value."
+            fi
+            DEB_IMAGE=`ls ${ROOT}/kernel/ | grep "^linux-image-${KERNEL}_.*\.deb$" | tail -1`
+            if [ -z "${DEB_IMAGE}" ]; then
+                help "No .deb file found for kernel ${KERNEL}."
+            fi
+            DEB_HEADERS=`ls ${ROOT}/kernel/ | grep "^linux-headers-${KERNEL}_.*\.deb$" | tail -1`
+            if [ -z "${DEB_HEADERS}" ]; then
+                help "No .deb file found for kernel headers ${KERNEL}."
+            fi
+            shift
+            ;;
+        "-g"|"--enable-gma500")
+            shift
+            GMA500=yes
             ;;
         "-h"|"--help")
             help
@@ -111,12 +138,24 @@ for DIR in dev dev/pts sys proc; do
 done
 
 # Install kernel
-sudo chroot ${ROOT}/root apt-get install --assume-yes linux-headers-4.9.0-4-686 linux-image-4.9.0-4-686
+if [ -z "${KERNEL}" ]; then
+    sudo chroot ${ROOT}/root apt-get install --assume-yes linux-headers-4.9.0-4-686 linux-image-4.9.0-4-686
+else
+    sudo cp ${ROOT}/kernel/${DEB_IMAGE} ${ROOT}/kernel/${DEB_HEADERS} ${ROOT}/root/
+    sudo chroot ${ROOT}/root dpkg -i /${DEB_IMAGE} /${DEB_HEADERS}
+    sudo rm ${ROOT}/root/${DEB_IMAGE} ${ROOT}/root/${DEB_HEADERS}
+fi
 
 # Make bootable
 printf "fs1:\ngrub\nfs1:\ngrub\n" | sudo tee ${ROOT}/root/boot/boot.nsh > /dev/null
 printf "fs1:\nboot\nfs0:\nboot\n" | sudo tee ${ROOT}/root/boot/startup.nsh > /dev/null
 sudo cp ${ROOT}/files/grub.cfg ${ROOT}/root/boot/
+if [ ! -z "${KERNEL}" ]; then
+    sudo sed -i "s/4\.9\.0-4-686/${KERNEL}/" ${ROOT}/root/boot/grub.cfg
+fi
+if [ ! -z "${GMA500}" ]; then
+    sudo sed -i 's/modprobe.blacklist=floppy,gma500_gfx/modprobe.blacklist=floppy/' ${ROOT}/root/boot/grub.cfg
+fi
 sudo chroot ${ROOT}/root grub-mkimage --config /boot/grub.cfg --compression xz --output /boot/grub.efi --format i386-efi --prefix "" configfile fat part_msdos linux boot search search_label efi_gop efi_uga
 
 # Boot in multi-user mode

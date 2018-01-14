@@ -63,14 +63,10 @@ emulated machine as close to the Joggler as possible, but this will do for now.
 
 * A script is in use to generate a MAC address for the ethernet device. This
   script has been taken from [Andrew Davison's repository](https://github.com/andydvsn/OpenFrame-Ubuntu/).
+* The `gma500_gfx` has been disabled on boot by default, because the Joggler
+  will result in a kernel panic when loaded and no proper patches have been
+  applied. See [here](kernel/) if you want to use a patched kernel.
 
 ## To do
 
-* Investigate if there's really no sign of a MAC address to use for the
-  ethernet device in the firmware.
-* Find out why the GMA500 driver is oopsing the kernel, and see if it can be
-  prevented by either some kernel parameters or a patch.
-* Build a kernel incorporating some or all of the patches found at
-  [Andrew's site](http://birdslikewires.co.uk/download/openframe/kernel/).
 * Build a kernel optimised for the Joggler. Remove ISA, floppy, HDMI etc.
-
