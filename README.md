@@ -40,23 +40,19 @@ password `joggler`. This user is part of the `sudo` group.
 
 ## Testing
 
-I use qemu for when testing some things. In the folder [qemu/](qemu/) a small
-disk image `internal.img`, representing the internal disk of the Joggler so
-our image is really seen as `FS1:`, and a binary copy of the 32-bit EFI
-firmware from the [EDK II](https://github.com/tianocore/edk2)-project, taken
-from [here](https://github.com/BlankOn/ovmf-blobs).
+I use qemu for testing some things. In the folder [qemu/](qemu/) you will
+find a small disk image `internal.img`, representing the internal disk of
+the Joggler, which is needed to make the EFI firmware see our image as `FS1:`.
+There is also a binary copy of the 32-bit EFI firmware from the
+[EDK II](https://github.com/tianocore/edk2)-project, taken from
+[here](https://github.com/BlankOn/ovmf-blobs).
+
+Also in that folder is a helper-script `qemu.sh` which saves me from having
+to copy-and-paste the command every time.
 
 Run:
 
-    qemu-system-i386 -bios qemu/bios32.bin -usb -device nec-usb-xhci,id=xhci \
-        -drive if=none,format=raw,id=internal,file=qemu/internal.img \
-        -device usb-storage,bus=xhci.0,drive=internal \
-        -drive if=none,format=raw,id=external,file=joggler.img \
-        -device usb-storage,bus=xhci.0,drive=external \
-        -m 512M -k en-us -monitor stdio \
-        -net nic,model=rtl8139 \
-        -net user,net=10.255.0.0/24,dhcpstart=10.255.0.10,hostfwd=tcp::1222-:22 \
-        -cpu n270
+    ./qemu/qemu.sh
 
 This will get you a system booting from the disk image, accessible with SSH at
 `localhost`, port 22. There's a lot more options to try with qemu to get the

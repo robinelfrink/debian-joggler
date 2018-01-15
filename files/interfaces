@@ -3,6 +3,3 @@ iface lo inet loopback
 
 auto ens1
 iface ens1 inet dhcp
-
-auto ens3
-iface ens3 inet dhcp
