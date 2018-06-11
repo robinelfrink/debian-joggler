@@ -9,4 +9,4 @@ The patches are updated versions of the ones found on
 ## How to build
 
 Follow the steps from the Debian Linux Kernel Handbook,
-(4.5. Building a custom kernel from Debian kernel source)[https://kernel-handbook.alioth.debian.org/ch-common-tasks.html#s-common-building].
+[4.5. Building a custom kernel from Debian kernel source](https://kernel-team.pages.debian.net/kernel-handbook/ch-common-tasks.html#s-common-building).
