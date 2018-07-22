@@ -221,7 +221,7 @@
       file:
         path: '{{ item }}'
         state: absent
-      with_fileglob: '{{ inventory_dir }}/var/cache/apt/archives/*.deb'
+      with_fileglob: '{{ inventory_dir }}/root/var/cache/apt/archives/*.deb'
 
     - name: Unmount everything
       become: true
