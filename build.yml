@@ -131,6 +131,7 @@
         - { dest: '{{ inventory_dir }}/root/etc/network/interfaces', src: 'files/interfaces' }
         - { dest: '{{ inventory_dir }}/root/etc/network/if-pre-up.d/openframe-mac', src: 'files/openframe-mac', mode: '0755' }
         - { dest: '{{ inventory_dir }}/root/etc/hosts', src: 'files/hosts' }
+        - { dest: '{{ inventory_dir }}/root/etc/rsyslog.conf', src: 'files/rsyslog.conf' }
 
     - name: Install standard kernel
       become: true
@@ -216,12 +217,19 @@
       become: true
       command: 'chroot {{ inventory_dir }}/root useradd --home-dir /home/joggler --groups sudo,audio,video --create-home --password sa0dkJX04f4tM --shell /bin/bash joggler'
 
-    - name: Clear apt cache
+    - name: Clear apt cache and logs
       become: true
       file:
-        path: '{{ item }}'
-        state: absent
-      with_fileglob: '{{ inventory_dir }}/root/var/cache/apt/archives/*.deb'
+        path: '{{ item.path }}'
+        state: '{{ item.state }}'
+        mode: '{{ item.mode | default(None) }}'
+      with_items:
+        - { path: '{{ inventory_dir }}/root/var/cache/apt/archives', state: absent }
+        - { path: '{{ inventory_dir }}/root/var/lib/apt/lists', state: absent }
+        - { path: '{{ inventory_dir }}/root/var/log', state: absent }
+        - { path: '{{ inventory_dir }}/root/var/cache/apt/archives', state: directory, mode: '1777' }
+        - { path: '{{ inventory_dir }}/root/var/lib/apt/lists', state: directory, mode: '1777' }
+        - { path: '{{ inventory_dir }}/root/var/log', state: directory, mode: '1777' }
 
     - name: Unmount everything
       become: true
