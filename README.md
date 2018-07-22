@@ -5,23 +5,18 @@ the [O2 Joggler](https://en.wikipedia.org/wiki/O2_Joggler).
 
 ## Requirements
 
-A computer running Linux, having `debootstrap`, `mount`, `parted`, `coreutils`
-and `xz-utils` installed.
+A computer running Linux, having `ansible`, `debootstrap`, `mount`, `parted`,
+`coreutils` and `xz-utils` installed.
 
 ## Creating the image
 
-    Usage: ./build.sh [OPTION]...
-    Create Debian Stretch image for the O2 Joggler.
-    
-    -s, --size SIZE       Total size of the image in MB, defaults to 2000
-    -k, --kernel VERSION  Use kernel VERSION. Make sure the linux-image-*
-                          and linux-headers-* packages are in ./kernel/.
-    -g, --enable-gma500   Enable the gma500_gfx framebuffer driver.
-    -h, --help            Display this help and exit
+```bash
+$ ansible-playbook build.yml [-e kernel=<version>] [-e gma500=true]
+```
 
-The script uses sudo, so it will ask for your password.
+The playbook uses sudo, so it will ask for your password.
 
-When the script is ready, you will find a `joggler.img.xz` which, when
+When the playbook is ready, you will find a `joggler.img.xz` which, when
 extracted, will result in a 2GB disk image which you can write to an
 USB stick.
 

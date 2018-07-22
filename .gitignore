@@ -1,7 +1,10 @@
 *
-!/build.sh
+!/ansible.cfg
+!/hosts
+!/build.yml
 !/files/fstab
 !/files/grub.cfg
+!/files/hosts
 !/files/interfaces
 !/files/openframe-mac
 !/files/sources.list

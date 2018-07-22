@@ -1,0 +1,256 @@
+---
+- hosts: localhost
+  gather_facts: false
+  vars:
+    size: 2000
+    kernel: False
+    gma500: False
+
+  tasks:
+
+    - name: Install required packages
+      become: true
+      apt:
+        update_cache: true
+        state: present
+        name:
+          - coreutils
+          - debootstrap
+          - mount
+          - parted
+          - xz-utils
+
+    - name: Create image file
+      command: 'truncate -s{{ size }}M {{ inventory_dir }}/joggler.img'
+
+    - name: Set up partitions
+      become: true
+      parted:
+        device: '{{ inventory_dir }}/joggler.img'
+        state: present
+        label: msdos
+        number: '{{ item.number }}'
+        part_type: primary
+        part_start: '{{ item.start }}'
+        part_end: '{{ item.end }}'
+        flags: '{{ item.flags }}'
+      with_items:
+        - { number: 1, start: 1MB, end: 128MB, flags: ['boot'] }
+        - { number: 2, start: 128MB, end: 100%, flags: [] }
+
+    - name: Attach loop device
+      become: true
+      command: 'losetup --partscan --show --find {{ inventory_dir }}/joggler.img'
+      register: loop_device
+
+    - name: Format partitions
+      become: true
+      filesystem:
+        dev: '{{ item.dev }}'
+        force: true
+        fstype: '{{ item.fstype }}'
+        opts: '{{ item.opts }}'
+      with_items:
+        - { dev: '{{ loop_device.stdout_lines[0] }}p1', fstype: vfat, opts: '-n jogglerboot' }
+        - { dev: '{{ loop_device.stdout_lines[0] }}p2', fstype: ext4, opts: '-L jogglerroot' }
+
+    - name: Create dummy fstab
+      copy:
+        dest: fstab
+        content: ''
+
+    - name: Create root mountpoint
+      file:
+        path: '{{ inventory_dir }}/root'
+        state: directory
+        recurse: true
+        force: true
+
+    - name: Mount root partition
+      become: true
+      mount:
+        path: '{{ inventory_dir }}/root'
+        src: LABEL=jogglerroot
+        opts: errors=remount-ro,noatime
+        fstype: ext4
+        fstab: fstab
+        state: mounted
+
+    - name: Create boot mountpoint
+      become: true
+      file:
+        path: '{{ inventory_dir }}/root/boot'
+        state: directory
+        recurse: true
+        force: true
+
+    - name: Mount boot partition
+      become: true
+      mount:
+        path: '{{ inventory_dir }}/root/boot'
+        src: LABEL=jogglerboot
+        fstype: vfat
+        fstab: fstab
+        state: mounted
+
+    - name: Install base system
+      become: true
+      command: '{{ item }}'
+      with_items:
+        - 'debootstrap --foreign --arch i386 --components main,contrib,non-free --include apt-transport-https,busybox,firmware-misc-nonfree,grub-efi-ia32,initramfs-tools,initramfs-tools-core,klibc-utils,libklibc,linux-base,openssh-server,r8168-dkms,sudo --exclude dmidecode,irqbalance stretch {{ inventory_dir }}/root'
+        - 'chroot {{ inventory_dir }}/root /debootstrap/debootstrap --second-stage'
+
+    - name: Bind mounts
+      become: true
+      mount:
+        path: '{{ inventory_dir }}/root/{{ item }}'
+        src: '/{{ item }}'
+        fstype: none
+        opts: bind
+        fstab: fstab
+        state: mounted
+      with_items: [ 'dev', 'dev/pts', 'sys', 'proc' ]
+ 
+    - name: Create directory
+      become: true
+      file:
+        path: '{{ inventory_dir }}/root/etc/network/if-pre-up.d'
+        state: directory
+        recurse: true
+        force: true
+
+    - name: Copy files
+      become: true
+      copy:
+        dest: '{{ item.dest }}'
+        src: '{{ item.src }}'
+        mode: '{{ item.mode | default(0644) }}'
+      with_items:
+        - { dest: '{{ inventory_dir }}/root/etc/apt/sources.list', src: 'files/sources.list' }
+        - { dest: '{{ inventory_dir }}/root/etc/fstab', src: 'files/fstab' }
+        - { dest: '{{ inventory_dir }}/root/etc/network/interfaces', src: 'files/interfaces' }
+        - { dest: '{{ inventory_dir }}/root/etc/network/if-pre-up.d/openframe-mac', src: 'files/openframe-mac', mode: '0755' }
+        - { dest: '{{ inventory_dir }}/root/etc/hosts', src: 'files/hosts' }
+
+    - name: Install standard kernel
+      become: true
+      command: 'chroot {{ inventory_dir }}/root apt-get install --assume-yes --allow-unauthenticated linux-headers-686 linux-image-686'
+      when: not kernel
+
+    - name: Install custom kernel
+      become: true
+      block:
+        - find:
+            paths: '{{ inventory_dir }}/kernel'
+            patterns: 'linux-image-{{ kernel }}_*.deb'
+          register: kernel_image
+        - find:
+            paths: '{{ inventory_dir }}/kernel'
+            patterns: 'linux-headers-{{ kernel }}_*.deb'
+          register: kernel_headers
+        - copy:
+            dest: "{{ inventory_dir }}/root/{{ (kernel_image.files | last).path | regex_replace('.*/', '') }}"
+            src: '{{ (kernel_image.files | last).path }}'
+        - copy:
+            dest: "{{ inventory_dir }}/root/{{ (kernel_headers.files | last).path | regex_replace('.*/', '') }}"
+            src: '{{ (kernel_headers.files | last).path }}'
+        - command: "chroot {{ inventory_dir }}/root dpkg --install /{{ (kernel_image.files | last).path | regex_replace('.*/', '') }} /{{ (kernel_headers.files | last).path | regex_replace('.*/', '') }}"
+        - file:
+            path: '{{ item }}'
+            state: absent
+          with_items:
+            - "{{ inventory_dir }}/root/{{ (kernel_image.files | last).path | regex_replace('.*/', '') }}"
+            - "{{ inventory_dir }}/root/{{ (kernel_headers.files | last).path | regex_replace('.*/', '') }}"
+      when: not not kernel
+
+    - name: Find kernel file
+      find:
+        paths: '{{ inventory_dir }}/root/boot'
+        patterns: 'vmlinuz-*'
+      register: vmlinuz
+
+    - name: Find initrd image
+      find:
+        paths: '{{ inventory_dir }}/root/boot'
+        patterns: 'initrd.img-*'
+      register: initrd
+
+    - name: Create grub configuration
+      become: true
+      template:
+        dest: '{{ inventory_dir }}/root/boot/grub.cfg'
+        src: 'files/grub.cfg'
+
+    - name: Create boot scripts
+      become: true
+      copy:
+        dest: '{{ inventory_dir }}/root/boot/{{ item.dest }}'
+        content: '{{ item.content }}'
+      with_items:
+        - { dest: boot.nsh, content: "fs1:\ngrub\nfs1:\ngrub\n" }
+        - { dest: startup.nsh, content: "fs1:\nboot\nfs0:\nboot\n" }
+
+    - name: Enable gma500 driver
+      become: true
+      replace:
+        path: '{{ inventory_dir }}/root/boot/grub.cfg'
+        regexp: 'modprobe.blacklist=floppy,gma500_gfx'
+        replace: 'modprobe.blacklist=floppy'
+      when: not not gma500
+
+    - name: Install grub
+      become: true
+      command: 'chroot {{ inventory_dir }}/root grub-mkimage --config /boot/grub.cfg --compression xz --output /boot/grub.efi --format i386-efi --prefix "" configfile fat part_msdos linux boot search search_label efi_gop efi_uga'
+
+    - name: Boot in multi-user mode
+      become: true
+      command: 'chroot {{ inventory_dir }}/root systemctl set-default multi-user.target'
+
+    - name: Set hostname
+      become: true
+      copy:
+        dest: '{{ inventory_dir }}/root/etc/hostname'
+        content: 'joggler'
+
+    - name: Add user
+      become: true
+      command: 'chroot {{ inventory_dir }}/root useradd --home-dir /home/joggler --groups sudo,audio,video --create-home --password sa0dkJX04f4tM --shell /bin/bash joggler'
+
+    - name: Clear apt cache
+      become: true
+      file:
+        path: '{{ item }}'
+        state: absent
+      with_fileglob: '{{ inventory_dir }}/var/cache/apt/archives/*.deb'
+
+    - name: Unmount everything
+      become: true
+      mount:
+        path: '{{ inventory_dir }}/root/{{ item }}'
+        src: '/{{ item }}'
+        fstype: none
+        opts: bind
+        fstab: fstab
+        state: unmounted
+      with_items: [ 'proc', 'sys', 'dev/pts', 'dev', 'boot', '' ]
+
+    - name: Erase unused space
+      become: true
+      command: 'zerofree {{ loop_device.stdout_lines[0] }}p2'
+
+    - name: Detach loop device
+      become: true
+      command: 'losetup --detach {{ loop_device.stdout_lines[0] }}'
+
+    - name: Compress image
+      command: 'xz -zvv {{ inventory_dir }}/joggler.img'
+
+    - name: Clean up work files
+      become: true
+      file:
+        path: '{{ item }}'
+        state: absent
+      with_items:
+        - fstab
+        - joggler.img
+        - root
