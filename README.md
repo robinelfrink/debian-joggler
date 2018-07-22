@@ -49,9 +49,10 @@ Run:
 
     ./qemu/qemu.sh
 
-This will get you a system booting from the disk image, accessible with SSH at
-`localhost`, port 22. There's a lot more options to try with qemu to get the
-emulated machine as close to the Joggler as possible, but this will do for now.
+This will get you a system booting from the (uncompressed) disk image,
+accessible with SSH at localhost`, port 1222. There's a lot more options to try
+with qemu to get the emulated machine as close to the Joggler as possible, but
+this will do for now.
 
 ## Notes
 
