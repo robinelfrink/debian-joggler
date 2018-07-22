@@ -21,7 +21,7 @@
           - xz-utils
 
     - name: Create image file
-      command: 'truncate -s{{ size }}M {{ inventory_dir }}/joggler.img'
+      command: 'truncate -s{{ size }}MB {{ inventory_dir }}/joggler.img'
 
     - name: Set up partitions
       become: true
