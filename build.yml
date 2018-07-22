@@ -35,8 +35,8 @@
         part_end: '{{ item.end }}'
         flags: '{{ item.flags }}'
       with_items:
-        - { number: 1, start: 1MB, end: 128MB, flags: ['boot'] }
-        - { number: 2, start: 128MB, end: 100%, flags: [] }
+        - { number: 1, start: 1MB, end: 64MB, flags: ['boot'] }
+        - { number: 2, start: 64MB, end: 100%, flags: [] }
 
     - name: Attach loop device
       become: true
