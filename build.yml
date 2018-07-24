@@ -79,7 +79,7 @@
     - name: Create boot mountpoint
       become: true
       file:
-        path: '{{ inventory_dir }}/root/boot'
+        path: '{{ inventory_dir }}/root/boot/efi'
         state: directory
         recurse: true
         force: true
@@ -87,7 +87,7 @@
     - name: Mount boot partition
       become: true
       mount:
-        path: '{{ inventory_dir }}/root/boot'
+        path: '{{ inventory_dir }}/root/boot/efi'
         src: LABEL=jogglerboot
         fstype: vfat
         fstab: fstab
@@ -99,6 +99,19 @@
       with_items:
         - 'debootstrap --foreign --arch i386 --components main,contrib,non-free --include apt-transport-https,busybox,firmware-misc-nonfree,grub-efi-ia32,initramfs-tools,initramfs-tools-core,klibc-utils,libklibc,linux-base,openssh-server,r8168-dkms,sudo,wpasupplicant --exclude dmidecode,irqbalance stretch {{ inventory_dir }}/root'
         - 'chroot {{ inventory_dir }}/root /debootstrap/debootstrap --second-stage'
+
+    - name: Blacklist floppy driver
+      become: true
+      copy:
+        dest: '{{ inventory_dir }}/root/etc/modprobe.d/blacklist-floppy.conf'
+        content: 'blacklist floppy'
+
+    - name: Blacklist gma500 driver
+      become: true
+      copy:
+        dest: '{{ inventory_dir }}/root/etc/modprobe.d/blacklist-gma500.conf'
+        content: 'blacklist gma500'
+      when: not gma500
 
     - name: Bind mounts
       become: true
@@ -176,32 +189,22 @@
         patterns: 'initrd.img-*'
       register: initrd
 
-    - name: Create grub configuration
+    - name: Install GRUB
       become: true
-      template:
-        dest: '{{ inventory_dir }}/root/boot/grub.cfg'
-        src: 'files/grub.cfg'
+      command: 'chroot {{ inventory_dir }}/root grub-install --target i386-efi'
+
+    - name: Create GRUB configuration
+      become: true
+      command: 'chroot {{ inventory_dir }}/root grub-mkconfig --output=/boot/grub/grub.cfg'
 
     - name: Create boot scripts
       become: true
       copy:
-        dest: '{{ inventory_dir }}/root/boot/{{ item.dest }}'
+        dest: '{{ inventory_dir }}/root/boot/efi/{{ item.dest }}'
         content: '{{ item.content }}'
       with_items:
-        - { dest: boot.nsh, content: "fs1:\ngrub\nfs1:\ngrub\n" }
+        - { dest: boot.nsh, content: "fs1:\ncd EFI\ncd debian\ngrub\nfs1:\ncd EFI\ncd debian\ngrub\n" }
         - { dest: startup.nsh, content: "fs1:\nboot\nfs0:\nboot\n" }
-
-    - name: Enable gma500 driver
-      become: true
-      replace:
-        path: '{{ inventory_dir }}/root/boot/grub.cfg'
-        regexp: 'modprobe.blacklist=floppy,gma500_gfx'
-        replace: 'modprobe.blacklist=floppy'
-      when: not not gma500
-
-    - name: Install grub
-      become: true
-      command: 'chroot {{ inventory_dir }}/root grub-mkimage --config /boot/grub.cfg --compression xz --output /boot/grub.efi --format i386-efi --prefix "" configfile fat part_msdos linux boot search search_label efi_gop efi_uga'
 
     - name: Boot in multi-user mode
       become: true
@@ -240,7 +243,7 @@
         opts: bind
         fstab: fstab
         state: unmounted
-      with_items: [ 'proc', 'sys', 'dev/pts', 'dev', 'boot', '' ]
+      with_items: [ 'proc', 'sys', 'dev/pts', 'dev', 'boot/efi', '' ]
 
     - name: Erase unused space
       become: true
