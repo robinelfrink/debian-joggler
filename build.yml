@@ -97,21 +97,8 @@
       become: true
       command: '{{ item }}'
       with_items:
-        - 'debootstrap --foreign --arch i386 --components main,contrib,non-free --include apt-transport-https,busybox,firmware-misc-nonfree,grub-efi-ia32,initramfs-tools,initramfs-tools-core,klibc-utils,libklibc,linux-base,openssh-server,r8168-dkms,sudo,wpasupplicant --exclude dmidecode,irqbalance stretch {{ inventory_dir }}/root'
+        - 'debootstrap --foreign --arch i386 --components main,contrib,non-free --include apt-transport-https,busybox,firmware-misc-nonfree,grub-efi-ia32,initramfs-tools,initramfs-tools-core,klibc-utils,libklibc,linux-base,openssh-server,plymouth,plymouth-themes,r8168-dkms,sudo,wpasupplicant --exclude dmidecode,irqbalance stretch {{ inventory_dir }}/root'
         - 'chroot {{ inventory_dir }}/root /debootstrap/debootstrap --second-stage'
-
-    - name: Blacklist floppy driver
-      become: true
-      copy:
-        dest: '{{ inventory_dir }}/root/etc/modprobe.d/blacklist-floppy.conf'
-        content: 'blacklist floppy'
-
-    - name: Blacklist gma500 driver
-      become: true
-      copy:
-        dest: '{{ inventory_dir }}/root/etc/modprobe.d/blacklist-gma500.conf'
-        content: 'blacklist gma500'
-      when: not gma500
 
     - name: Bind mounts
       become: true
@@ -146,6 +133,18 @@
         - { dest: '{{ inventory_dir }}/root/etc/hosts', src: 'files/hosts' }
         - { dest: '{{ inventory_dir }}/root/etc/rsyslog.conf', src: 'files/rsyslog.conf' }
 
+    - name: Add graphics drivers to initrd
+      become: true
+      lineinfile:
+        line: '{{ item }}'
+        path: '{{ inventory_dir }}/root/etc/initramfs-tools/modules'
+        regexp: '^(#\s*)?{{ item }}\s*$'
+      with_items:
+        - drm
+        - bochs_drm modeset=1
+        - gma500_gfx modeset=1
+      when: "not not gma500 or item != 'gma500 modeset=1'"
+
     - name: Install standard kernel
       become: true
       command: 'chroot {{ inventory_dir }}/root apt-get install --assume-yes --allow-unauthenticated linux-headers-686 linux-image-686'
@@ -177,17 +176,26 @@
             - "{{ inventory_dir }}/root/{{ (kernel_headers.files | last).path | regex_replace('.*/', '') }}"
       when: not not kernel
 
-    - name: Find kernel file
-      find:
-        paths: '{{ inventory_dir }}/root/boot'
-        patterns: 'vmlinuz-*'
-      register: vmlinuz
+    - name: Set splash theme
+      become: true
+      command: 'chroot {{ inventory_dir }}/root plymouth-set-default-theme solar'
 
-    - name: Find initrd image
-      find:
-        paths: '{{ inventory_dir }}/root/boot'
-        patterns: 'initrd.img-*'
-      register: initrd
+    - name: Set GRUB options
+      become: true
+      vars:
+        blacklist: "modprobe.blacklist=floppy{{ ',gma500_gfx' if not gma500 else '' }}"
+      lineinfile:
+        line: '{{ item.key }}={{ item.value }}'
+        path: '{{ inventory_dir }}/root/etc/default/grub'
+        regexp: '^(#\s*)?{{ item.key }}\s*='
+      with_items:
+        - { key: GRUB_CMDLINE_LINUX, value: '"splash acpi=force acpi_backlight=vendor intel_idle.max_cstate=2 irqpoll panic=30 reboot=acpi biosdevname=0 hpet=disable {{ blacklist }}"' }
+        - { key: GRUB_BADRAM, value: '"0x01000000,0xff000000"' }
+        - { key: GRUB_GFXMODE, value: 'auto' }
+        - { key: GRUB_TERMINAL_OUTPUT, value: gfxterm }
+        - { key: GRUB_TIMEOUT, value: 0 }
+        - { key: GRUB_TIMEOUT_STYLE, value: hidden }
+        - { key: GRUB_DISABLE_OS_PROBER, value: true }
 
     - name: Install GRUB
       become: true
