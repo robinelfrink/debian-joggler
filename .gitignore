@@ -3,7 +3,6 @@
 !/hosts
 !/build.yml
 !/files/fstab
-!/files/grub.cfg
 !/files/hosts
 !/files/interfaces
 !/files/openframe-mac
