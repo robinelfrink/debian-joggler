@@ -3,6 +3,17 @@
 This is used to create a base [Debian Stretch](https://www.debian.org/) image for
 the [O2 Joggler](https://en.wikipedia.org/wiki/O2_Joggler).
 
+## For the impatient
+
+Ready-to-use images, with a custom kernel and the gma500 driver enabled,
+are available at the
+[releases overview](https://github.com/robinelfrink/debian-joggler/releases).
+
+Download the release you want, and (assuming your USB stick is known as
+`/dev/sdc`) run:
+
+    $ xz -dvvc debian-joggler-<release>.img.xz | sudo dd of=/dev/sdc bs=1M
+
 ## Requirements
 
 A computer running Linux, having `ansible`, `debootstrap`, `mount`, `parted`,
