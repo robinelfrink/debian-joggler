@@ -145,6 +145,10 @@
         - gma500_gfx modeset=1
       when: "not not gma500 or item != 'gma500 modeset=1'"
 
+    - name: Set splash theme
+      become: true
+      command: 'chroot {{ inventory_dir }}/root plymouth-set-default-theme solar'
+
     - name: Install standard kernel
       become: true
       command: 'chroot {{ inventory_dir }}/root apt-get install --assume-yes --allow-unauthenticated linux-headers-686 linux-image-686'
@@ -176,10 +180,6 @@
             - "{{ inventory_dir }}/root/{{ (kernel_headers.files | last).path | regex_replace('.*/', '') }}"
       when: not not kernel
 
-    - name: Set splash theme
-      become: true
-      command: 'chroot {{ inventory_dir }}/root plymouth-set-default-theme solar'
-
     - name: Set GRUB options
       become: true
       vars:
@@ -189,13 +189,25 @@
         path: '{{ inventory_dir }}/root/etc/default/grub'
         regexp: '^(#\s*)?{{ item.key }}\s*='
       with_items:
-        - { key: GRUB_CMDLINE_LINUX, value: '"splash acpi=force acpi_backlight=vendor intel_idle.max_cstate=2 irqpoll panic=30 reboot=acpi biosdevname=0 hpet=disable {{ blacklist }}"' }
+        - { key: GRUB_CMDLINE_LINUX, value: '"quiet splash"' }
+        - { key: GRUB_CMDLINE_LINUX_DEFAULT, value: '"acpi=force acpi_backlight=vendor intel_idle.max_cstate=2 irqpoll panic=30 reboot=acpi biosdevname=0 hpet=disable {{ blacklist }}"' }
         - { key: GRUB_BADRAM, value: '"0x01000000,0xff000000"' }
-        - { key: GRUB_GFXMODE, value: 'auto' }
+        - { key: GRUB_GFXMODE, value: '800x480' }
+        - { key: GRUB_GFXPAYLOAD_LINUX, value: keep }
         - { key: GRUB_TERMINAL_OUTPUT, value: gfxterm }
         - { key: GRUB_TIMEOUT, value: 0 }
         - { key: GRUB_TIMEOUT_STYLE, value: hidden }
         - { key: GRUB_DISABLE_OS_PROBER, value: true }
+
+    - name: Set hard coded values in /etc/grub.d/10_linux
+      become: true
+      lineinfile:
+        line: '{{ item }}="1"'
+        path: '{{ inventory_dir }}/root/etc/grub.d/10_linux'
+        regexp: '^(#\s*)?{{ item }}\s*='
+      with_items:
+        - quiet_boot
+        - vt_handoff
 
     - name: Install GRUB
       become: true
