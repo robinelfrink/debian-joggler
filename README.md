@@ -14,11 +14,26 @@ A computer running Linux, having `ansible`, `debootstrap`, `mount`, `parted`,
 $ ansible-playbook build.yml [-e kernel=<version>] [-e gma500=true]
 ```
 
+The optional extra variables are documented below.
+
 The playbook uses sudo, so it will ask for your password.
 
 When the playbook is ready, you will find a `joggler.img.xz` which, when
 extracted, will result in a 2GB disk image which you can write to an
 USB stick.
+
+## Extra variables
+
+* `kernel=<version>`
+
+  Install kernel version <version> instead of the default Debian kernel. The
+  playbook looks for `.deb`-files (kernel-image and kernel-headers) in
+  `./kernel`.
+
+* `gma500=true`
+
+  Enable the `gma500_gfx` module to get accelerated graphics. You need a
+  patched kernel for this.
 
 ## Write to USB stick
 
