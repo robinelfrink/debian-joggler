@@ -22,7 +22,7 @@ A computer running Linux, having `ansible`, `debootstrap`, `mount`, `parted`,
 ## Creating the image
 
 ```bash
-$ ansible-playbook build.yml [-e kernel=<version>] [-e gma500=true]
+$ ansible-playbook build.yml [-e kernel=<version>] [-e gma500=true] [-e usetarball=true]
 ```
 
 The optional extra variables are documented below.
@@ -45,6 +45,11 @@ USB stick.
 
   Enable the `gma500_gfx` module to get accelerated graphics. You need a
   patched kernel for this.
+
+* `usetarball=true`
+
+  Use a tarball (`packages.tgz`) to extract packages from, instead of
+  downloading them. If the tarball does not exist, it will be created first.
 
 ## Write to USB stick
 
