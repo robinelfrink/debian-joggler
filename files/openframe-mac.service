@@ -1,0 +1,15 @@
+[Unit]
+Description=Manages MAC addresses on OpenFrame devices.
+After=syslog.target
+Wants=network-pre.target
+Before=network-pre.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/sbin/openframe-mac
+StandardOutput=syslog
+StandardError=syslog
+
+[Install]
+WantedBy=multi-user.target

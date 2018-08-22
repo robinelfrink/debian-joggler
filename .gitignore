@@ -6,6 +6,7 @@
 !/files/hosts
 !/files/interfaces
 !/files/openframe-mac
+!/files/openframe-mac.service
 !/files/rsyslog.conf
 !/files/sources.list
 !/qemu/internal.img

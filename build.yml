@@ -147,7 +147,8 @@
         - { dest: '{{ inventory_dir }}/root/etc/apt/sources.list', src: 'files/sources.list' }
         - { dest: '{{ inventory_dir }}/root/etc/fstab', src: 'files/fstab' }
         - { dest: '{{ inventory_dir }}/root/etc/network/interfaces', src: 'files/interfaces' }
-        - { dest: '{{ inventory_dir }}/root/etc/network/if-pre-up.d/openframe-mac', src: 'files/openframe-mac', mode: '0755' }
+        - { dest: '{{ inventory_dir }}/root/usr/sbin/openframe-mac', src: 'files/openframe-mac', mode: '0755' }
+        - { dest: '{{ inventory_dir }}/root/lib/systemd/system/openframe-mac.service', src: 'files/openframe-mac.service' }
         - { dest: '{{ inventory_dir }}/root/etc/hosts', src: 'files/hosts' }
         - { dest: '{{ inventory_dir }}/root/etc/rsyslog.conf', src: 'files/rsyslog.conf' }
 
@@ -243,6 +244,10 @@
       with_items:
         - { dest: boot.nsh, content: "fs1:\ncd EFI\ncd debian\ngrub\nfs1:\ncd EFI\ncd debian\ngrub\n" }
         - { dest: startup.nsh, content: "fs1:\nboot\nfs0:\nboot\n" }
+
+    - name: Enable openframe-mac script on boot
+      become: true
+      command: 'chroot {{ inventory_dir }}/root systemctl enable openframe-mac'
 
     - name: Boot in multi-user mode
       become: true

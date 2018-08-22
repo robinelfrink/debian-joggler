@@ -7,28 +7,19 @@
 #  If no wireless interface is available, we generate a MAC for
 #  the ethernet interface.
 
-
-if [ "$IFACE" = "ens1" ]; then
-
-	if [ -f '/etc/network/mac_ens1' ]; then
-		ENS1_MAC=`cat /etc/network/mac_ens1`
-	else
-		ENS1_MAC=""
-		DEVICES=`ls /sys/class/net/ | grep '^wl'`
-		if [ "${DEVICES}" != "" ]; then
-			for DEVICE in $DEVICES; do
-				DEVICE_MAC=`cat /sys/class/net/${DEVICE}/address`
-				ENS1_MAC=`echo ${DEVICE_MAC} | sed 's/^00:/02:/'`
-			done
-		fi
-		if [ "${ENS1_MAC}" = "" ]; then
-			DEVICE_MAC="02:`md5sum /sys/firmware/acpi/tables/DSDT | sed -r "s/(.{2})/\1:/g; s/^(.{14}).*/\1/"`"
-		fi
-		echo ${ENS1_MAC} > /etc/network/mac_ens1
-	fi
-
-	ip link set ens1 address ${ENS1_MAC}
-
+ETH=`ls /sys/class/net/ | grep '^en' | head -1`
+ETH_MAC=""
+DEVICES=`ls /sys/class/net/ | grep '^wl'`
+if [ "${DEVICES}" != "" ]; then
+	for DEVICE in $DEVICES; do
+		DEVICE_MAC=`cat /sys/class/net/${DEVICE}/address`
+		ETH_MAC=`echo ${DEVICE_MAC} | sed 's/^00:/02:/'`
+	done
 fi
+if [ "${ETH_MAC}" = "" ]; then
+	DEVICE_MAC="02:`md5sum /sys/firmware/acpi/tables/DSDT | sed -r "s/(.{2})/\1:/g; s/^(.{14}).*/\1/"`"
+fi
+
+ip link set ${ETH} address ${ETH_MAC}
 
 exit 0
