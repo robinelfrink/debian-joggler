@@ -51,6 +51,10 @@ USB stick.
   Use a tarball (`packages.tgz`) to extract packages from, instead of
   downloading them. If the tarball does not exist, it will be created first.
 
+* `enable_sleep=true`
+
+  Enable sleep (and suspension).
+
 ## Write to USB stick
 
 Assuming your USB stick is known as `/dev/sdc`, and it is not currently

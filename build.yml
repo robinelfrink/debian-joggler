@@ -6,6 +6,7 @@
     kernel: False
     gma500: False
     usetarball: False
+    enable_sleep: False
 
   tasks:
 
@@ -262,6 +263,11 @@
     - name: Add user
       become: true
       command: 'chroot {{ inventory_dir }}/root useradd --home-dir /home/joggler --groups sudo,audio,video --create-home --password sa0dkJX04f4tM --shell /bin/bash joggler'
+
+    - name: Disable sleep
+      become: true
+      command: 'chroot {{ inventory_dir }}/root systemctl mask sleep.target suspend.target hibernate.target hybrid-sleep.target'
+      when: not enable_sleep
 
     - name: Clear apt cache and logs
       become: true
