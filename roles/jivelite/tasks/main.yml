@@ -1,0 +1,66 @@
+---
+- name: Fetch JiveLite Debian package
+  get_url:
+    url: 'https://github.com/robinelfrink/jivelite/releases/download/debian_v0.1.0/jivelite_0.1.0_i386.deb'
+    checksum: 'sha256:24b7be95f9e012a70db3fd1cede0ef567eeb49ef5bb96d5baebfa9ff91b42157'
+    dest: '{{ inventory_dir }}/root/tmp/'
+
+- name: Install JiveLite
+  environment:
+    DEBIAN_FRONTEND: noninteractive
+  command: 'chroot {{ inventory_dir }}/root apt install --assume-yes --allow-unauthenticated --fix-broken /tmp/jivelite_0.1.0_i386.deb'
+
+- name: Install nodm and Xorg
+  environment:
+    DEBIAN_FRONTEND: noninteractive
+  command: 'chroot {{ inventory_dir }}/root apt install --assume-yes --allow-unauthenticated nodm xorg xdotool'
+
+- name: Enable nodm
+  lineinfile:
+    path: '{{ inventory_dir }}/root/etc/default/nodm'
+    regexp: 'NODM_ENABLED='
+    line: 'NODM_ENABLED=true'
+
+- name: Make nodm start for user joggler
+  lineinfile:
+    path: '{{ inventory_dir }}/root/etc/default/nodm'
+    regexp: 'NODM_USER='
+    line: 'NODM_USER=joggler'
+
+- name: Fix nodm systemd service
+  blockinfile:
+    path: '{{ inventory_dir }}/root/lib/systemd/system/nodm.service'
+    block: |
+       [Install]
+       WantedBy=multi-user.target
+
+- name: Enable nodm systemd service
+  command: 'chroot {{ inventory_dir }}/root systemctl enable nodm.service'
+
+- name: Make nodm start JiveLite
+  copy:
+    dest: '{{ inventory_dir }}/root/home/joggler/.xsession'
+    content: |
+      #!/usr/bin/env bash
+      xset s off
+      xset -dpms
+      xset s noblank
+      xdotool mousemove 640 2000
+      while true; do
+        jivelite
+        sleep 5s
+      done
+
+- name: Create JiveLite settings directory
+  file:
+    path: '{{ inventory_dir }}/root/home/joggler/.jivelite/userpath/settings'
+    state: directory
+
+- name: Set JiveLite skin
+  copy:
+    dest: '{{ inventory_dir }}/root/home/joggler/.jivelite/userpath/settings/SelectSkin.lua'
+    content: |
+      settings = {skin="JogglerSkin",}
+
+- name: Set files and directories owner
+  command: 'chroot {{ inventory_dir }}/root chown -R joggler:joggler /home/joggler'

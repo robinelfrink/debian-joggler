@@ -7,6 +7,7 @@
     gma500: False
     usetarball: False
     enable_sleep: False
+    add_jivelite: False
 
   tasks:
 
@@ -269,6 +270,13 @@
       become: true
       command: 'chroot {{ inventory_dir }}/root systemctl mask sleep.target suspend.target hibernate.target hybrid-sleep.target'
       when: not enable_sleep
+
+    - name: Add JiveLite
+      vars:
+        ansible_become: true
+      include_role:
+        name: jivelite
+      when: add_jivelite
 
     - name: Clear apt cache and logs
       become: true

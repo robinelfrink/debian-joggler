@@ -22,7 +22,7 @@ A computer running Linux, having `ansible`, `debootstrap`, `mount`, `parted`,
 ## Creating the image
 
 ```bash
-$ ansible-playbook build.yml [-e kernel=<version>] [-e gma500=true] [-e usetarball=true]
+$ ansible-playbook build.yml [-e variable=value] [-e ...]
 ```
 
 The optional extra variables are documented below.
@@ -54,6 +54,10 @@ USB stick.
 * `enable_sleep=true`
 
   Enable sleep (and suspension).
+
+* `add_jivelite=true`
+
+  Install JiveLite, and make it start automatically on boot.
 
 ## Write to USB stick
 

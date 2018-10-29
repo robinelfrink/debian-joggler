@@ -18,3 +18,4 @@
 !/kernel/patches/02-openframe-backlight-driver.patch
 !/kernel/patches/03-gma500-use-openframe-backlight.patch
 !/kernel/README.md
+!/roles/**
