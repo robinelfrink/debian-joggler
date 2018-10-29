@@ -231,7 +231,7 @@
 
     - name: Install GRUB
       become: true
-      command: 'chroot {{ inventory_dir }}/root grub-install --target i386-efi'
+      command: 'chroot {{ inventory_dir }}/root grub-install --target i386-efi --removable'
 
     - name: Create GRUB configuration
       become: true
