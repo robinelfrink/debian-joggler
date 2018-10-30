@@ -55,6 +55,10 @@ USB stick.
 
   Enable sleep (and suspension).
 
+* `timezone=<timezone>`
+
+  Set the Joggler's timezone, e.g. 'Europe/Amsterdam'
+
 * `add_jivelite=true`
 
   Install JiveLite, and make it start automatically on boot.

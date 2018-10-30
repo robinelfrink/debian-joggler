@@ -7,6 +7,7 @@
     gma500: False
     usetarball: False
     enable_sleep: False
+    timezone: False
     add_jivelite: False
 
   tasks:
@@ -270,6 +271,11 @@
       become: true
       command: 'chroot {{ inventory_dir }}/root systemctl mask sleep.target suspend.target hibernate.target hybrid-sleep.target'
       when: not enable_sleep
+
+    - name: Set timezone
+      become: true
+      command: 'chroot {{ inventory_dir }}/root timedatectl set-timezone {{ timezone }}'
+      when: timezone
 
     - name: Add JiveLite
       vars:
