@@ -272,6 +272,14 @@
       command: 'chroot {{ inventory_dir }}/root systemctl mask sleep.target suspend.target hibernate.target hybrid-sleep.target'
       when: not enable_sleep
 
+    - name: Make logind not suspend
+      become: true
+      lineinfile:
+        path: '{{ inventory_dir }}/root/etc/systemd/logind.conf'
+        regexp: 'HandleLidSwitch='
+        line: 'HandleLidSwitch=ignore'
+      when: not enable_sleep
+
     - name: Set timezone
       become: true
       command: 'chroot {{ inventory_dir }}/root timedatectl set-timezone {{ timezone }}'
