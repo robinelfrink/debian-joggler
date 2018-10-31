@@ -6,6 +6,9 @@
     src: brightnessd
     mode: 0755
 
+- name: Install required packages
+  command: 'chroot {{ inventory_dir }}/root apt-get install --assume-yes --allow-unauthenticated python3 python3-smbus'
+
 - name: Install brightnessd service
   copy:
     dest: '{{ inventory_dir}}/root/etc/systemd/system/brightnessd.service'
