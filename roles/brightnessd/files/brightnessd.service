@@ -1,0 +1,5 @@
+[Unit]
+Description=Joggler Brightness Daemon
+
+[Service]
+ExecStart=/usr/sbin/brightnessd

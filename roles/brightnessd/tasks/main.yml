@@ -1,0 +1,20 @@
+---
+
+- name: Install brightnessd script
+  copy:
+    dest: '{{ inventory_dir }}/root/usr/sbin/brightnessd'
+    src: brightnessd
+    mode: 0755
+
+- name: Install brightnessd service
+  copy:
+    dest: '{{ inventory_dir}}/root/etc/systemd/system/brightnessd.service'
+    src: brightnessd.service
+
+- name: Load module {{ item }} on boot
+  lineinfile:
+    path: '{{ inventory_dir}}/root/etc/modules'
+    line: '{{ item }}'
+  with_items:
+    - i2c-dev
+    - openframe_bl

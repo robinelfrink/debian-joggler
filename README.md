@@ -55,6 +55,10 @@ USB stick.
 
   Enable sleep (and suspension).
 
+* `disable_brightnessd=true`
+
+  Do not install brightnessd.
+
 * `timezone=<timezone>`
 
   Set the Joggler's timezone, e.g. 'Europe/Amsterdam'

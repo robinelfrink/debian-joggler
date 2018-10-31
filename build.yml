@@ -7,6 +7,7 @@
     gma500: False
     usetarball: False
     enable_sleep: False
+    disable_brightnessd: False
     timezone: False
     add_jivelite: False
 
@@ -279,6 +280,13 @@
         regexp: 'HandleLidSwitch='
         line: 'HandleLidSwitch=ignore'
       when: not enable_sleep
+
+    - name: Install brightnessd
+      vars:
+        ansible_become: true
+      include_role:
+        name: brightnessd
+      when: not disable_brightnessd
 
     - name: Set timezone
       become: true

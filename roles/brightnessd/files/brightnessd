@@ -1,0 +1,55 @@
+#!/usr/bin/env python3
+
+
+# Based on:
+# https://git.linuxmce.org/l3mce/linuxmce/tree/master/src/joggler-utils/joggler-backlight-ambient-sensor-daemon
+
+
+import logging
+from os import listdir
+from os.path import isdir, isfile
+import re
+from smbus import SMBus
+from time import sleep
+
+
+logging.basicConfig(level='INFO')
+
+
+if not isdir('/sys/bus/platform/drivers/isch_smbus/isch_smbus.33049'):
+    quit('Is module i2c_isch loaded?')
+
+if not isfile('/sys/class/backlight/openframe-bl/brightness'):
+    quit('Is module openframe_bl loaded?')
+
+
+nr = False
+for f in listdir('/sys/bus/platform/drivers/isch_smbus/isch_smbus.33049'):
+    m = re.match('i2c-(\d+)', f)
+    if m:
+        nr = int(m.group(1))
+        break
+
+
+if nr is False:
+    quit('Cannot identify i2c_isch bus number.')
+
+
+bus = SMBus(nr)
+
+
+while True:
+    old_brightness = int(open('/sys/class/backlight/openframe-bl/brightness', 'r').read())
+    try:
+        while True:
+            data = bus.read_block_data(0x34, 0x27)
+            if data[0] == 0x87:
+                break
+        sensor = data[2] << 8 | data[1]
+        brightness = int((sensor * 20) / 32)
+        if abs(brightness - old_brightness) > 1:
+            logging.info('Adjusting brightness to {:d}'.format(brightness))
+            open('/sys/class/backlight/openframe-bl/brightness', 'w').write("{:d}\n".format(brightness))
+    except:
+        pass
+    sleep(3)
