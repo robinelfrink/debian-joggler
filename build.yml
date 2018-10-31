@@ -288,11 +288,11 @@
         name: brightnessd
       when: not disable_brightnessd
 
-    - name: Set timezone
-      become: true
-      copy:
-        dest: '{{ inventory_dir }}/root/etc/timezone'
-        content: '{{ timezone }}'
+    - name: Configure timezone
+      vars:
+        ansible_become: true
+      include_role:
+        name: timezone
       when: '"{{ timezone }}"'
 
     - name: Add JiveLite
