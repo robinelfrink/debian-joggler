@@ -290,8 +290,10 @@
 
     - name: Set timezone
       become: true
-      command: 'chroot {{ inventory_dir }}/root timedatectl set-timezone {{ timezone }}'
-      when: timezone
+      copy:
+        dest: '{{ inventory_dir }}/root/etc/timezone'
+        content: '{{ timezone }}'
+      when: '"{{ timezone }}"'
 
     - name: Add JiveLite
       vars:
