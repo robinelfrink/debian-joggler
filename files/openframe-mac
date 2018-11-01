@@ -17,7 +17,7 @@ if [ "${DEVICES}" != "" ]; then
 	done
 fi
 if [ "${ETH_MAC}" = "" ]; then
-	DEVICE_MAC="02:`md5sum /sys/firmware/acpi/tables/DSDT | sed -r "s/(.{2})/\1:/g; s/^(.{14}).*/\1/"`"
+	ETH_MAC="02:`md5sum /sys/firmware/acpi/tables/DSDT | sed -r "s/(.{2})/\1:/g; s/^(.{14}).*/\1/"`"
 fi
 
 ip link set ${ETH} address ${ETH_MAC}
