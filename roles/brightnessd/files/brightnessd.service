@@ -1,5 +1,14 @@
 [Unit]
 Description=Joggler Brightness Daemon
+StartLimitInterval=120
+StartLimitBurst=10
+After=local-fs.target systemd-sysctl.service systemd-modules-load.service
+
+[Install]
+WantedBy=multi-user.target
 
 [Service]
+Type=simple
 ExecStart=/usr/sbin/brightnessd
+Restart=always
+RestartSec=5

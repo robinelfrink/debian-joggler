@@ -14,6 +14,9 @@
     dest: '{{ inventory_dir}}/root/etc/systemd/system/brightnessd.service'
     src: brightnessd.service
 
+- name: Enable brightnessd service
+  command: 'chroot {{ inventory_dir }}/root systemctl status brightnessd'
+
 - name: Load module {{ item }} on boot
   lineinfile:
     path: '{{ inventory_dir}}/root/etc/modules'
