@@ -202,6 +202,9 @@
           with_items:
             - "{{ inventory_dir }}/root/{{ (kernel_image.files | last).path | regex_replace('.*/', '') }}"
             - "{{ inventory_dir }}/root/{{ (kernel_headers.files | last).path | regex_replace('.*/', '') }}"
+        - copy:
+            dest: '{{ inventory_dir }}/root/etc/modprobe.d/joggler-audio.conf'
+            content: 'options snd-hda-intel position_fix=1 bdl_pos_adj=64 model=ref'
       when: not not kernel
 
     - name: Set GRUB options
