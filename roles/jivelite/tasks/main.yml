@@ -15,6 +15,11 @@
     DEBIAN_FRONTEND: noninteractive
   command: 'chroot {{ inventory_dir }}/root apt install --assume-yes --allow-unauthenticated nodm xorg xdotool'
 
+- name: Install squeezelite
+  environment:
+    DEBIAN_FRONTEND: noninteractive
+  command: 'chroot {{ inventory_dir }}/root apt install --assume-yes --allow-unauthenticated squeezelite'
+
 - name: Enable nodm
   lineinfile:
     path: '{{ inventory_dir }}/root/etc/default/nodm'
