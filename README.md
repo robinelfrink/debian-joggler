@@ -51,6 +51,10 @@ USB stick.
   Use a tarball (`packages.tgz`) to extract packages from, instead of
   downloading them. If the tarball does not exist, it will be created first.
 
+* `hostname=<hostname>`
+
+  Set the hostname. Defaults to 'joggler'.
+
 * `enable_sleep=true`
 
   Enable sleep (and suspension).

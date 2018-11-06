@@ -6,6 +6,7 @@
     kernel: False
     gma500: False
     usetarball: False
+    hostname: 'joggler'
     enable_sleep: False
     disable_brightnessd: False
     timezone: False
@@ -254,7 +255,7 @@
       become: true
       copy:
         dest: '{{ inventory_dir }}/root/etc/hostname'
-        content: 'joggler'
+        content: '{{ hostname }}'
 
     - name: Audio configuration
       vars:
