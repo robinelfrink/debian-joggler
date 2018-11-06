@@ -175,7 +175,7 @@
 
     - name: Install standard kernel
       become: true
-      command: 'chroot {{ inventory_dir }}/root apt-get install --assume-yes --allow-unauthenticated linux-headers-686 linux-image-686'
+      command: 'chroot {{ inventory_dir }}/root apt-get install --assume-yes --allow-unauthenticated linux-image-686'
       when: not kernel
 
     - name: Install custom kernel
@@ -185,26 +185,15 @@
             paths: '{{ inventory_dir }}/kernel'
             patterns: 'linux-image-{{ kernel }}_*.deb'
           register: kernel_image
-        - find:
-            paths: '{{ inventory_dir }}/kernel'
-            patterns: 'linux-headers-{{ kernel }}_*.deb'
-          register: kernel_headers
         - copy:
             dest: "{{ inventory_dir }}/root/{{ (kernel_image.files | last).path | regex_replace('.*/', '') }}"
             src: '{{ (kernel_image.files | last).path }}'
-        - copy:
-            dest: "{{ inventory_dir }}/root/{{ (kernel_headers.files | last).path | regex_replace('.*/', '') }}"
-            src: '{{ (kernel_headers.files | last).path }}'
-        - command: "chroot {{ inventory_dir }}/root dpkg --install /{{ (kernel_image.files | last).path | regex_replace('.*/', '') }} /{{ (kernel_headers.files | last).path | regex_replace('.*/', '') }}"
+        - command: "chroot {{ inventory_dir }}/root dpkg --install /{{ (kernel_image.files | last).path | regex_replace('.*/', '') }}"
         - file:
             path: '{{ item }}'
             state: absent
           with_items:
             - "{{ inventory_dir }}/root/{{ (kernel_image.files | last).path | regex_replace('.*/', '') }}"
-            - "{{ inventory_dir }}/root/{{ (kernel_headers.files | last).path | regex_replace('.*/', '') }}"
-        - copy:
-            dest: '{{ inventory_dir }}/root/etc/modprobe.d/joggler-audio.conf'
-            content: 'options snd-hda-intel position_fix=1 bdl_pos_adj=64 model=ref'
       when: not not kernel
 
     - name: Set GRUB options
@@ -266,6 +255,12 @@
       copy:
         dest: '{{ inventory_dir }}/root/etc/hostname'
         content: 'joggler'
+
+    - name: Audio configuration
+      vars:
+        ansible_become: true
+      include_role:
+        name: audio
 
     - name: Add user
       become: true

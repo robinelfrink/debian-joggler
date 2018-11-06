@@ -38,7 +38,7 @@ USB stick.
 * `kernel=<version>`
 
   Install kernel version <version> instead of the default Debian kernel. The
-  playbook looks for `.deb`-files (kernel-image and kernel-headers) in
+  playbook looks for the `linux-image-<version>_i386.deb`-file in
   `./kernel`.
 
 * `gma500=true`

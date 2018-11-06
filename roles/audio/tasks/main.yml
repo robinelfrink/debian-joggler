@@ -1,0 +1,23 @@
+---
+- name: Set kernel audio module flags
+  # https://www.jogglerwiki.com/forum/viewtopic.php?p=19156#p19156
+  copy:
+    dest: '{{ inventory_dir }}/root/etc/modprobe.d/joggler-audio.conf'
+    content: 'options snd-hda-intel position_fix=1 bdl_pos_adj=64 model=ref'
+
+- name: Default audio settings
+  copy:
+    dest: '{{ inventory_dir }}/root/var/lib/alsa/asound.state'
+    content: |
+        state.MID {
+            control.10 {
+                iface MIXER
+                name 'Master Playback Volume'
+                value 19
+            }
+            control.11 {
+                iface MIXER
+                name 'Master Playback Switch'
+                value true
+            }
+        }
