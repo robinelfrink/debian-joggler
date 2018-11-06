@@ -22,6 +22,11 @@ if not isdir('/sys/bus/platform/drivers/isch_smbus/isch_smbus.33049'):
 if not isfile('/sys/class/backlight/openframe-bl/brightness'):
     quit('Is module openframe_bl loaded?')
 
+# Make sure we're not being fooled on boot
+open('/sys/class/backlight/openframe-bl/brightness', 'w').write("{:d}\n".format(
+     int(open('/sys/class/backlight/openframe-bl/brightness', 'r').read())))
+
+
 
 nr = False
 for f in listdir('/sys/bus/platform/drivers/isch_smbus/isch_smbus.33049'):
