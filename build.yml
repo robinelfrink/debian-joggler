@@ -133,7 +133,7 @@
         opts: bind
         fstab: fstab
         state: mounted
-      with_items: [ 'dev', 'dev/pts', 'sys', 'proc' ]
+      with_items: [ 'dev', 'dev/pts', 'sys', 'proc', 'run' ]
  
     - name: Create directory
       become: true
@@ -324,7 +324,7 @@
         opts: bind
         fstab: fstab
         state: unmounted
-      with_items: [ 'proc', 'sys', 'dev/pts', 'dev', 'boot/efi', '' ]
+      with_items: [ 'run', 'proc', 'sys', 'dev/pts', 'dev', 'boot/efi', '' ]
 
     - name: Erase unused space
       become: true

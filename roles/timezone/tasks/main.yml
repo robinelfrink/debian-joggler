@@ -1,8 +1,3 @@
 ---
 - name: Set timezone
-  copy:
-    dest: '{{ inventory_dir }}/root/etc/timezone'
-    content: '{{ timezone }}'
-
-- name: Activate timezone
-  command: 'chroot {{ inventory_dir }}/root dpkg-reconfigure --frontend noninteractive tzdata'
+  command: 'chroot {{ inventory_dir }}/root timedatectl set-timezone {{ timezone }}'
