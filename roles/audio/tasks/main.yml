@@ -5,6 +5,9 @@
     dest: '{{ inventory_dir }}/root/etc/modprobe.d/joggler-audio.conf'
     content: 'options snd-hda-intel position_fix=1 bdl_pos_adj=64 model=ref'
 
+- name: Install alsa-utils
+  command: 'chroot {{ inventory_dir }}/root apt-get install --assume-yes --allow-unauthenticated alsa-utils'
+
 - name: Default audio settings
   copy:
     dest: '{{ inventory_dir }}/root/var/lib/alsa/asound.state'
