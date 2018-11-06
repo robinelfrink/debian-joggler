@@ -15,7 +15,7 @@
     src: brightnessd.service
 
 - name: Enable brightnessd service
-  command: 'chroot {{ inventory_dir }}/root systemctl status brightnessd'
+  command: 'chroot {{ inventory_dir }}/root systemctl enable brightnessd'
 
 - name: Load module {{ item }} on boot
   lineinfile:
