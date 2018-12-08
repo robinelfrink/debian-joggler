@@ -35,6 +35,10 @@ USB stick.
 
 ## Extra variables
 
+* `size=<megabytes>`
+
+  Create an image <megabytes>MB in size.
+
 * `kernel=<version>`
 
   Install kernel version <version> instead of the default Debian kernel. The
