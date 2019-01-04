@@ -82,7 +82,9 @@ USB stick.
 Assuming your USB stick is known as `/dev/sdc`, and it is not currently
 mounted, run:
 
-    $ xz -dvvc joggler.img.xz | sudo dd of=/dev/sdc bs=1M
+   ```shell
+   $ xz -dvvc joggler.img.xz | sudo dd of=/dev/sdc bs=1M
+   ```
 
 ## Using it
 
@@ -104,7 +106,9 @@ to copy-and-paste the command every time.
 
 Run:
 
-    ./qemu/qemu.sh
+   ```shell
+   ./qemu/qemu.sh
+   ```
 
 This will get you a system booting from the (uncompressed) disk image,
 accessible with SSH at localhost`, port 1222. There's a lot more options to try
