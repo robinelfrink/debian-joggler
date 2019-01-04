@@ -12,7 +12,9 @@ are available at the
 Download the release you want, and (assuming your USB stick is known as
 `/dev/sdc`) run:
 
-    $ xz -dvvc debian-joggler-<release>.img.xz | sudo dd of=/dev/sdc bs=1M
+   ```shell
+   $ xz -dvvc debian-joggler-<release>.img.xz | sudo dd of=/dev/sdc bs=1M
+   ```
 
 ## Requirements
 
@@ -21,9 +23,9 @@ A computer running Linux, having `ansible`, `debootstrap`, `mount`, `parted`,
 
 ## Creating the image
 
-```bash
-$ ansible-playbook build.yml [-e variable=value] [-e ...]
-```
+   ```shell
+   $ ansible-playbook build.yml [-e variable=value] [-e ...]
+   ```
 
 The optional extra variables are documented below.
 
@@ -35,45 +37,45 @@ USB stick.
 
 ## Extra variables
 
-* `size=<megabytes>`
+*   `size=<megabytes>`
 
-  Create an image <megabytes>MB in size.
+    Create an image <megabytes>MB in size.
 
-* `kernel=<version>`
+*   `kernel=<version>`
 
-  Install kernel version <version> instead of the default Debian kernel. The
-  playbook looks for the `linux-image-<version>_i386.deb`-file in
-  `./kernel`.
+    Install kernel version <version> instead of the default Debian kernel. The
+    playbook looks for the `linux-image-<version>_i386.deb`-file in
+    `./kernel`.
 
-* `gma500=true`
+*   `gma500=true`
 
-  Enable the `gma500_gfx` module to get accelerated graphics. You need a
-  patched kernel for this.
+    Enable the `gma500_gfx` module to get accelerated graphics. You need a
+    patched kernel for this.
 
-* `usetarball=true`
+*   `usetarball=true`
 
-  Use a tarball (`packages.tgz`) to extract packages from, instead of
-  downloading them. If the tarball does not exist, it will be created first.
+    Use a tarball (`packages.tgz`) to extract packages from, instead of
+    downloading them. If the tarball does not exist, it will be created first.
 
-* `hostname=<hostname>`
+*   `hostname=<hostname>`
 
-  Set the hostname. Defaults to 'joggler'.
+    Set the hostname. Defaults to 'joggler'.
 
-* `enable_sleep=true`
+*   `enable_sleep=true`
 
-  Enable sleep (and suspension).
+    Enable sleep (and suspension).
 
-* `disable_brightnessd=true`
+*   `disable_brightnessd=true`
 
-  Do not install brightnessd.
+    Do not install brightnessd.
 
-* `timezone=<timezone>`
+*   `timezone=<timezone>`
 
-  Set the Joggler's timezone, e.g. 'Europe/Amsterdam'
+    Set the Joggler's timezone, e.g. 'Europe/Amsterdam'
 
-* `add_jivelite=true`
+*   `add_jivelite=true`
 
-  Install JiveLite, and make it start automatically on boot.
+    Install JiveLite, and make it start automatically on boot.
 
 ## Write to USB stick
 
@@ -111,12 +113,13 @@ this will do for now.
 
 ## Notes
 
-* A script is in use to generate a MAC address for the ethernet device. This
-  script has been taken from [Andrew Davison's repository](https://github.com/andydvsn/OpenFrame-Ubuntu/).
-* The `gma500_gfx` has been disabled on boot by default, because the Joggler
-  will result in a kernel panic when loaded and no proper patches have been
-  applied. See [here](kernel/) if you want to use a patched kernel.
+*   A script is in use to generate a MAC address for the ethernet device. This
+    script has been taken from [Andrew Davison's repository](https://github.com/andydvsn/OpenFrame-Ubuntu/).
+
+*   The `gma500_gfx` has been disabled on boot by default, because the Joggler
+    will result in a kernel panic when loaded and no proper patches have been
+    applied. See [here](kernel/) if you want to use a patched kernel.
 
 ## To do
 
-* Build a kernel optimised for the Joggler. Remove ISA, floppy, HDMI etc.
+*   Build a kernel optimised for the Joggler. Remove ISA, floppy, HDMI etc.
