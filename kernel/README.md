@@ -13,7 +13,7 @@ Follow the steps from the Debian Linux Kernel Handbook,
 
 In short:
 
-```
+```shell
 $ wget <url of linux-source-x.x.deb>
 $ sudo dpkg -i linux-source-x.x.deb
 $ tar xzf /usr/src/linux-source-x.x.tar.xz

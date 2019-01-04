@@ -1,7 +1,7 @@
 #!/bin/sh
 
 SCRIPT=$0
-ROOT=`readlink -f $(dirname $(readlink -f ${SCRIPT}))/../`
+ROOT=$(readlink -f $(dirname $(readlink -f ${SCRIPT}))/../)
 
 qemu-system-i386 -bios qemu/bios32.bin \
     -machine pc -cpu n270 \
