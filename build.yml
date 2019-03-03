@@ -135,14 +135,6 @@
         state: mounted
       with_items: [ 'dev', 'dev/pts', 'sys', 'proc', 'run' ]
  
-    - name: Create directory
-      become: true
-      file:
-        path: '{{ inventory_dir }}/root/etc/network/if-pre-up.d'
-        state: directory
-        recurse: true
-        force: true
-
     - name: Copy files
       become: true
       copy:
