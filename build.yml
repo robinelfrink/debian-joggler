@@ -150,6 +150,13 @@
         - { dest: '{{ inventory_dir }}/root/etc/hosts', src: 'files/hosts' }
         - { dest: '{{ inventory_dir }}/root/etc/rsyslog.conf', src: 'files/rsyslog.conf' }
 
+    - name: Create link
+      become: true
+      file:
+        src: /lib/systemd/network/99-default.link
+        dest: '{{ inventory_dir }}/root/etc/systemd/network/99-default.link'
+        state: link
+
     - name: Add graphics drivers to initrd
       become: true
       lineinfile:
