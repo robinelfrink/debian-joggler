@@ -314,7 +314,7 @@
         ansible_become: true
       include_role:
         name: timezone
-      when: '"{{ timezone }}"'
+      when: 'timezone'
 
     - name: Add JiveLite
       vars:

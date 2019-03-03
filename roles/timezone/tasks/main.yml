@@ -1,3 +1,11 @@
 ---
-- name: Set timezone
-  command: 'chroot {{ inventory_dir }}/root timedatectl set-timezone {{ timezone }}'
+- name: Link timezone
+  file:
+    src: '/usr/share/zoneinfo/{{ timezone }}'
+    dest: '{{ inventory_dir }}/root/etc/localtime'
+    state: link
+
+- name: Write timezone
+  copy:
+    dest: '{{ inventory_dir }}/root/etc/timezone'
+    content: '{{ timezone }}'
