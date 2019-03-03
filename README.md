@@ -79,6 +79,10 @@ USB stick.
 
     Install JiveLite, and make it start automatically on boot.
 
+*   `wl_ssid=<ssid>` and `wl_psk=<psk>`
+
+    Set initial wireless configuration.
+
 ## Write to USB stick
 
 Assuming your USB stick is known as `/dev/sdc`, and it is not currently
