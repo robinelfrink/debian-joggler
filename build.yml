@@ -152,9 +152,9 @@
       with_items:
         - { dest: '{{ inventory_dir }}/root/etc/apt/sources.list', src: 'files/sources.list' }
         - { dest: '{{ inventory_dir }}/root/etc/fstab', src: 'files/fstab' }
-        - { dest: '{{ inventory_dir }}/root/etc/network/interfaces', src: 'files/interfaces' }
         - { dest: '{{ inventory_dir }}/root/usr/sbin/openframe-mac', src: 'files/openframe-mac', mode: '0755' }
         - { dest: '{{ inventory_dir }}/root/lib/systemd/system/openframe-mac.service', src: 'files/openframe-mac.service' }
+        - { dest: '{{ inventory_dir }}/root/etc/systemd/network/ethernet.network', src: 'files/ethernet.network' }
         - { dest: '{{ inventory_dir }}/root/etc/hosts', src: 'files/hosts' }
         - { dest: '{{ inventory_dir }}/root/etc/rsyslog.conf', src: 'files/rsyslog.conf' }
 
@@ -246,6 +246,10 @@
     - name: Enable openframe-mac script on boot
       become: true
       command: 'chroot {{ inventory_dir }}/root systemctl enable openframe-mac'
+
+    - name: Enable systemd-networkd
+      become: true
+      command: 'chroot {{ inventory_dir }}/root systemctl enable systemd-networkd'
 
     - name: Boot in multi-user mode
       become: true
