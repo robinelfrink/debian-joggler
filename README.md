@@ -39,7 +39,7 @@ USB stick.
 
 ## Extra variables
 
-*   `size=<megabytes>`
+*   `size=<megabytes>` (default: `2000`)
 
     Create an image <megabytes>MB in size.
 
@@ -49,12 +49,12 @@ USB stick.
     playbook looks for the `linux-image-<version>_i386.deb`-file in
     `./kernel`.
 
-*   `gma500=true`
+*   `gma500=<true/false>` (default: `false`)
 
     Enable the `gma500_gfx` module to get accelerated graphics. You need a
     patched kernel for this.
 
-*   `usetarball=true`
+*   `usetarball=<true/false>` (default: `false`)
 
     Use a tarball (`packages.tgz`) to extract packages from, instead of
     downloading them. If the tarball does not exist, it will be created first.
@@ -63,11 +63,11 @@ USB stick.
 
     Set the hostname. Defaults to 'joggler'.
 
-*   `enable_sleep=true`
+*   `enable_sleep=<true/false>` (default: `false`)
 
     Enable sleep (and suspension).
 
-*   `disable_brightnessd=true`
+*   `disable_brightnessd=<true/false>` (default: `false`)
 
     Do not install brightnessd.
 
@@ -75,7 +75,7 @@ USB stick.
 
     Set the Joggler's timezone, e.g. 'Europe/Amsterdam'
 
-*   `add_jivelite=true`
+*   `add_jivelite=<true/false>` (default: `false`)
 
     Install JiveLite, and make it start automatically on boot.
 
