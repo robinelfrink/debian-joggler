@@ -16,7 +16,7 @@ In short:
 ```shell
 $ wget <url of linux-source-x.x.deb>
 $ sudo dpkg -i linux-source-x.x.deb
-$ tar xzf /usr/src/linux-source-x.x.tar.xz
+$ tar xJf /usr/src/linux-source-x.x.tar.xz
 $ cd linux-source-x.x
 $ cp <location of x.x/config> .config
 $ for p in <location of x.x>/*.patch; do patch -p1 < $p; done
