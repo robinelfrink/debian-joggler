@@ -9,6 +9,8 @@
 !/files/openframe-mac.service
 !/files/rsyslog.conf
 !/files/sources.list
+!/files/ethernet.network
+!/files/wireless.network
 !/qemu/internal.img
 !/qemu/bios32.bin
 !/qemu/qemu.sh
