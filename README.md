@@ -2,7 +2,7 @@
 
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/4fa02d7a76ec4960909c48c3c5118103)](https://app.codacy.com/app/robinelfrink/debian-joggler?utm_source=github.com&utm_medium=referral&utm_content=robinelfrink/debian-joggler&utm_campaign=Badge_Grade_Dashboard)
 
-This is used to create a base [Debian Stretch](https://www.debian.org/) image for
+This is used to create a base [Debian Buster](https://www.debian.org/) image for
 the [O2 Joggler](https://en.wikipedia.org/wiki/O2_Joggler).
 
 ## For the impatient
