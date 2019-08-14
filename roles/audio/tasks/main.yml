@@ -11,16 +11,12 @@
 - name: Default audio settings
   copy:
     dest: '{{ inventory_dir }}/root/var/lib/alsa/asound.state'
-    content: |
-        state.MID {
-            control.10 {
-                iface MIXER
-                name 'Master Playback Volume'
-                value 19
-            }
-            control.11 {
-                iface MIXER
-                name 'Master Playback Switch'
-                value true
-            }
-        }
+    src: asound.state
+
+- name: Restore audio settings on boot
+  copy:
+    dest: '{{ inventory_dir}}/root/etc/systemd/system/alsa-restore.service'
+    src: alsa-restore.service
+
+- name: Enable alsa restore service
+  command: 'chroot {{ inventory_dir }}/root systemctl enable alsa-restore'

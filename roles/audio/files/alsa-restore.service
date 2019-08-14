@@ -1,0 +1,10 @@
+[Unit]
+Description=Restore alsa mixer settings
+
+[Service]
+Type=oneshot
+ExecStart=/usr/sbin/alsactl restore
+RemainAfterExit=true
+
+[Install]
+WantedBy=multi-user.target
