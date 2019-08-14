@@ -25,6 +25,7 @@
           - coreutils
           - debian-archive-keyring
           - debootstrap
+          - dosfstools
           - mount
           - parted
           - xz-utils
