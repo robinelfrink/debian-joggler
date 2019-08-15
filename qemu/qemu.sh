@@ -6,7 +6,9 @@ ROOT=$(readlink -f $(dirname $(readlink -f ${SCRIPT}))/../)
 qemu-system-i386 -bios qemu/bios32.bin \
     -machine pc -cpu n270 \
     -m 512M -usb -k en-us -monitor stdio \
-    -device VGA \
+    -display sdl \
+    -vga none \
+    -device virtio-vga,xres=800,yres=480 \
     -device pci-bridge,id=pci_bridge1,chassis_nr=1 \
     -device rtl8139,netdev=nic1,bus=pci_bridge1,addr=1 \
     -device usb-storage,drive=internal \
