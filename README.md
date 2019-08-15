@@ -20,8 +20,8 @@ Download the release you want, and (assuming your USB stick is known as
 
 ## Requirements
 
-A computer running Linux, having `ansible`, `debootstrap`, `mount`, `parted`,
-`coreutils` and `xz-utils` installed.
+A computer running Debian Linux, having `ansible`, `debootstrap`, `dosfstools`, `mount`,
+`parted`, `coreutils` and `xz-utils` installed.
 
 ## Creating the image
 
@@ -117,7 +117,7 @@ Run:
    ```
 
 This will get you a system booting from the (uncompressed) disk image,
-accessible with SSH at localhost`, port 1222. There's a lot more options to try
+accessible with SSH at `localhost`, port 1222. There's a lot more options to try
 with qemu to get the emulated machine as close to the Joggler as possible, but
 this will do for now.
 
