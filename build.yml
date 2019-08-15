@@ -106,7 +106,7 @@
 
     - name: Set debootstrap flags
       set_fact:
-        debootstrap_arguments: '--arch i386 --components main,contrib,non-free --include apt-transport-https,busybox,dbus,firmware-misc-nonfree,grub-efi-ia32,initramfs-tools,initramfs-tools-core,klibc-utils,libklibc,linux-base,openssh-server,plymouth,plymouth-themes,sudo,wpasupplicant --exclude dmidecode,irqbalance buster {{ inventory_dir }}/root'
+        debootstrap_arguments: '--arch i386 --components main,contrib,non-free --include apt-transport-https,busybox,dbus,firmware-misc-nonfree,grub-efi-ia32,initramfs-tools,initramfs-tools-core,klibc-utils,libklibc,linux-base,openssh-server,plymouth,plymouth-themes,sudo,wpasupplicant --exclude dmidecode,irqbalance buster'
 
     - name: Check for packages tarball
       stat:
@@ -114,18 +114,30 @@
       when: usetarball
       register: tarball_exists
 
+    - name: Create tarball download folder
+      file:
+        path: '{{ inventory_dir }}/tarball'
+        state: directory
+        recurse: true
+        force: true
+      when: 'usetarball and not tarball_exists.stat.exists'
+
     - name: Create packages tarball
       become: true
-      command: 'debootstrap --make-tarball {{ inventory_dir }}/packages.tgz {{ debootstrap_arguments }}'
+      command: 'debootstrap --make-tarball {{ inventory_dir }}/packages.tgz {{ debootstrap_arguments }} {{ inventory_dir }}/tarball'
       when: 'usetarball and not tarball_exists.stat.exists'
-      ignore_errors: true
+
+    - name: Remove tarball download folder
+      become: true
+      file:
+        path: '{{ inventory_dir }}/tarball'
+        state: absent
+        force: true
+      when: 'usetarball and not tarball_exists.stat.exists'
 
     - name: Install base system
       become: true
-      command: '{{ item }}'
-      with_items:
-        - "debootstrap --foreign {{ '--unpack-tarball '+inventory_dir+'/packages.tgz' if usetarball else '' }} {{ debootstrap_arguments }}"
-        - 'chroot {{ inventory_dir }}/root /debootstrap/debootstrap --second-stage'
+      command: "debootstrap {{ '--unpack-tarball '+inventory_dir+'/packages.tgz' if usetarball else '' }} {{ debootstrap_arguments }} {{ inventory_dir }}/root"
 
     - name: Bind mounts
       become: true
