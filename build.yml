@@ -172,6 +172,8 @@
         src: /lib/systemd/network/99-default.link
         dest: '{{ inventory_dir }}/root/etc/systemd/network/99-default.link'
         state: link
+        force: yes
+        follow: no
 
     - name: Add graphics drivers to initrd
       become: true

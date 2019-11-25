@@ -1,0 +1,48 @@
+name: Build
+
+on:
+  push:
+    tags:
+    - 'v*'
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    env:
+      KERNEL_VERSION: 4.19.67j1
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v1
+    - name: Fetch kernel package
+      run: |
+        curl --output ${PWD}/kernel/linux-image-${{ env.KERNEL_VERSION }}_${{ env.KERNEL_VERSION }}-1_i386.deb https://github.com/robinelfrink/debian-joggler/releases/download/v1.4/linux-image-${{ env.KERNEL_VERSION }}_${{ env.KERNEL_VERSION }}-1_i386.deb
+    - name: Build image using docker
+      run: |
+        docker run --rm --privileged --name builder --volume ${PWD}:/debian-joggler \
+            --volume /dev:/dev --name builder --volume ${PWD}:/debian-joggler debian:buster-slim \
+            /bin/bash -c "apt-get --yes update && apt-get --yes install python ansible debootstrap dosfstools mount parted coreutils xz-utils && cd /debian-joggler && ansible-playbook build.yml -e kernel=${{ env.KERNEL_VERSION }} -e gma500=true -e add_jivelite=true"
+    - name: Create release
+      uses: actions/create-release@v1.0.0
+      id: create_release
+      env:
+        GITHUB_TOKEN: ${{ secrets.RELEASE_SECRET }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        draft: false
+        prerelease: false
+    - name: Fetch tag name
+      id: tag
+      run: echo ::set-output name=tag::$(echo ${GITHUB_REF:10})
+    - name: Upload image
+      uses: actions/upload-release-asset@v1.0.1
+      env:
+        GITHUB_TOKEN: ${{ secrets.RELEASE_SECRET }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./joggler.img.xz
+        asset_name: joggler-${{ steps.tag.outputs.tag }}.img.xz
+        asset_content_type: application/x-xz
