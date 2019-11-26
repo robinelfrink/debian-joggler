@@ -129,7 +129,3 @@ this will do for now.
 *   The `gma500_gfx` has been disabled on boot by default, because the Joggler
     will result in a kernel panic when loaded and no proper patches have been
     applied. See [here](kernel/) if you want to use a patched kernel.
-
-## To do
-
-*   Build a kernel optimised for the Joggler. Remove ISA, floppy, HDMI etc.
