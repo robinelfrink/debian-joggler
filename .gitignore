@@ -15,10 +15,5 @@
 !/qemu/bios32.bin
 !/qemu/qemu.sh
 !/README.md
-!/kernel/config-4.9
-!/kernel/patches/01-i2c-driver.patch
-!/kernel/patches/02-openframe-backlight-driver.patch
-!/kernel/patches/03-gma500-use-openframe-backlight.patch
-!/kernel/README.md
 !/roles/**
 !/.github/workflows/*.yml
