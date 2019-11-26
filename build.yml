@@ -200,7 +200,7 @@
       become: true
       block:
         - find:
-            paths: '{{ inventory_dir }}/kernel'
+            paths: '{{ inventory_dir }}'
             patterns: 'linux-image-{{ kernel }}_*.deb'
           register: kernel_image
         - copy:
