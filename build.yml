@@ -106,7 +106,7 @@
 
     - name: Set debootstrap flags
       set_fact:
-        debootstrap_arguments: '--arch i386 --components main,contrib,non-free --include apt-transport-https,busybox,dbus,firmware-misc-nonfree,grub-efi-ia32,initramfs-tools,initramfs-tools-core,klibc-utils,libklibc,linux-base,openssh-server,plymouth,plymouth-themes,sudo,wpasupplicant --exclude dmidecode,irqbalance buster'
+        debootstrap_arguments: '--arch i386 --components main,contrib,non-free --include apt-transport-https,busybox,dbus,firmware-misc-nonfree,grub-efi-ia32,initramfs-tools,initramfs-tools-core,klibc-utils,libklibc,linux-base,openssh-server,plymouth,plymouth-themes,sudo,wpasupplicant --exclude dmidecode,irqbalance,logrotate,smartmontools buster'
 
     - name: Check for packages tarball
       stat:
