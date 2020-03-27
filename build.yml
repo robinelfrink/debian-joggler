@@ -344,6 +344,15 @@
         name: jivelite
       when: add_jivelite
 
+    - name: Make /etc/resolv.conf a symlink
+      become: true
+      file:
+        src: /run/systemd/resolve/resolv.conf
+        dest: '{{ inventory_dir }}/root/etc/resolv.conf'
+        state: link
+        force: yes
+        follow: no
+
     - name: Clear apt cache and logs
       become: true
       file:
