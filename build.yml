@@ -162,7 +162,6 @@
         - { dest: '{{ inventory_dir }}/root/usr/sbin/openframe-mac', src: 'files/openframe-mac', mode: '0755' }
         - { dest: '{{ inventory_dir }}/root/lib/systemd/system/openframe-mac.service', src: 'files/openframe-mac.service' }
         - { dest: '{{ inventory_dir }}/root/etc/systemd/network/ethernet.network', src: 'files/ethernet.network' }
-        - { dest: '{{ inventory_dir }}/root/etc/systemd/network/wireless.network', src: 'files/wireless.network' }
         - { dest: '{{ inventory_dir }}/root/etc/hosts', src: 'files/hosts' }
         - { dest: '{{ inventory_dir }}/root/etc/rsyslog.conf', src: 'files/rsyslog.conf' }
 
@@ -283,6 +282,13 @@
       become: true
       command: 'chroot {{ inventory_dir }}/root systemctl enable wpa_supplicant@wlp0s29f7u5'
       when: 'wl_ssid and wl_psk'
+
+    - name: Add wireless interface configuration
+      become: true
+      copy:
+        dest: '{{ inventory_dir }}/root/etc/systemd/network/wireless.network'
+        src: 'files/wireless.network'
+        mode: 0644
 
     - name: Boot in multi-user mode
       become: true
