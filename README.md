@@ -128,4 +128,5 @@ this will do for now.
 
 *   The `gma500_gfx` has been disabled on boot by default, because the Joggler
     will result in a kernel panic when loaded and no proper patches have been
-    applied. See [here](kernel/) if you want to use a patched kernel.
+    applied. See [here](https://github.com/robinelfrink/debian-joggler-kernel)
+    if you want to use a patched kernel.
