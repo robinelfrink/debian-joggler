@@ -11,14 +11,15 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      KERNEL_VERSION: 4.19.67j1
+      KERNEL_TAG: v5.4
+      KERNEL_VERSION: 5.4.19j1
 
     steps:
     - name: Checkout
       uses: actions/checkout@v1
     - name: Fetch kernel package
       run: |
-        curl --location --output ${PWD}/linux-image-${{ env.KERNEL_VERSION }}_${{ env.KERNEL_VERSION }}-1_i386.deb https://github.com/robinelfrink/debian-joggler-kernel/releases/download/v4.19/linux-image-${{ env.KERNEL_VERSION }}_${{ env.KERNEL_VERSION }}-1_i386.deb
+        curl --location --output ${PWD}/linux-image-${{ env.KERNEL_VERSION }}_${{ env.KERNEL_VERSION }}-1_i386.deb https://github.com/robinelfrink/debian-joggler-kernel/releases/download/${{ env.KERNEL_TAG }}/linux-image-${{ env.KERNEL_VERSION }}_${{ env.KERNEL_VERSION }}-1_i386.deb
     - name: Build image using docker
       run: |
         docker run --rm --privileged --name builder --volume ${PWD}:/debian-joggler \
