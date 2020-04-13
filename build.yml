@@ -188,7 +188,7 @@
 
     - name: Set splash theme
       become: true
-      command: 'chroot {{ inventory_dir }}/root plymouth-set-default-theme solar'
+      command: 'chroot {{ inventory_dir }}/root plymouth-set-default-theme spinner'
 
     - name: Install standard kernel
       become: true
