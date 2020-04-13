@@ -368,7 +368,7 @@
         ansible_become: true
       include_role:
         name: timezone
-      when: timezone|bool
+      when: timezone is string
 
     - name: Add JiveLite
       vars:
@@ -430,5 +430,4 @@
         state: absent
       with_items:
         - fstab
-        - joggler.img
         - root

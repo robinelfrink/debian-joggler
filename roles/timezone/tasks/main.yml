@@ -1,7 +1,7 @@
 ---
 - name: Link timezone
   file:
-    src: '/usr/share/zoneinfo/{{ timezone }}'
+    src: '../usr/share/zoneinfo/{{ timezone }}'
     dest: '{{ inventory_dir }}/root/etc/localtime'
     state: link
 
