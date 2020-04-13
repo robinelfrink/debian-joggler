@@ -83,6 +83,10 @@ USB stick.
 
     Set initial wireless configuration.
 
+*   `compress=<true/false>` (default: `true`)
+
+    Compress the resulting image.
+
 ## Write to USB stick
 
 Assuming your USB stick is known as `/dev/sdc`, and it is not currently

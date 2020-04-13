@@ -13,6 +13,7 @@
     add_jivelite: False
     wl_ssid: False
     wl_psk: False
+    compress: True
 
   tasks:
 
@@ -420,6 +421,7 @@
 
     - name: Compress image
       command: 'xz -zvv {{ inventory_dir }}/joggler.img'
+      when: compress|bool
 
     - name: Clean up work files
       become: true
