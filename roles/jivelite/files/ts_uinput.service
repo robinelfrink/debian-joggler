@@ -1,0 +1,16 @@
+[Unit]
+Description=tslib touchscreen input wrapper
+StartLimitInterval=120
+StartLimitBurst=10
+After=local-fs.target systemd-sysctl.service systemd-modules-load.service
+Before=jivelite
+ConditionVirtualization=false
+
+[Install]
+WantedBy=multi-user.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/ts_uinput --idev /dev/input/by-path/pci-0000:00:1d.2-usb-0:2:1.0-event-mouse --name touchscreen
+Restart=always
+RestartSec=5
