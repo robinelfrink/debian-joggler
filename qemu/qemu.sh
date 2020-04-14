@@ -14,6 +14,7 @@ qemu-system-i386 -bios qemu/bios32.bin \
     -device usb-storage,drive=internal \
     -device usb-storage,drive=external \
     -device usb-wacom-tablet \
+    -soundhw hda \
     -drive if=none,format=raw,id=internal,file=${ROOT}/qemu/internal.img \
     -drive if=none,format=raw,id=external,file=${ROOT}/joggler.img \
     -netdev user,id=nic1,net=10.255.0.0/24,dhcpstart=10.255.0.10,hostfwd=tcp::1222-:22
