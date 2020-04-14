@@ -63,9 +63,8 @@
 
 - name: Set JiveLite skin
   copy:
-    dest: '{{ inventory_dir }}/root/home/joggler/.jivelite/userpath/settings/SelectSkin.lua'
-    content: |
-      settings = {skin="JogglerSkin",}
+    dest: '{{ inventory_dir }}/root/home/joggler/'
+    src: .jivelite
 
 - name: Set files and directories owner
   command: 'chroot {{ inventory_dir }}/root chown -R joggler:joggler /home/joggler'
